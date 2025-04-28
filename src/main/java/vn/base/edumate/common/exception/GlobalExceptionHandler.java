@@ -1,0 +1,100 @@
+package vn.base.edumate.common.exception;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import vn.base.edumate.common.base.ErrorResponse;
+
+import java.time.LocalDateTime;
+
+@RestControllerAdvice
+@RequiredArgsConstructor
+@Slf4j
+public class GlobalExceptionHandler {
+
+    @Value("${system.exception.show.client-info}")
+    private boolean showClientInfo;
+
+    /**
+     *  Handle runtime exception
+     */
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlingRuntimeException(RuntimeException e, WebRequest request) {
+        log.error("Runtime exception: ", e);
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(ErrorCode.UNCATEGORIZED.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(ErrorCode.UNCATEGORIZED.getMessage())
+                .build();
+    }
+
+    /**
+     * Handle base application exception
+     */
+    @ExceptionHandler(BaseApplicationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlingApplicationException(BaseApplicationException e, WebRequest request) {
+        log.error("Application exception: ", e);
+        ErrorCode errorCode = e.getErrorCode();
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    /**
+     * Handle resource not found exception
+     */
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlingResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
+        log.error("Resource not found: ", e);
+        ErrorCode errorCode = e.getErrorCode();
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    /**
+     * Handle firebase authentication exception
+     */
+    @ExceptionHandler(CustomFirebaseAuthException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handlingCustomFirebaseAuthException(CustomFirebaseAuthException e, WebRequest request) {
+        log.error("Firebase exception: ", e);
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(e.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(e.getMessage())
+                .build();
+    }
+
+    /**
+     * Handle resource not found exception
+     */
+    @ExceptionHandler(InvalidTokenTypeException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handlingInvalidTokenTypeException(InvalidTokenTypeException e, WebRequest request) {
+        log.error("Invalid token: ", e);
+        ErrorCode errorCode = e.getErrorCode();
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(errorCode.getMessage())
+                .build();
+    }
+}

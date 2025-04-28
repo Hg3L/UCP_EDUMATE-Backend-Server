@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${subject}">Welcome to Edumate</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;">
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f4f4f4;padding:20px 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" cellpadding="0" cellspacing="0" width="600" style="background:#ffffff;border-radius:10px;overflow:hidden;">
+                    <tr>
+                        <td align="center">
+                            <img src="https://res.cloudinary.com/dyawg2wm1/image/upload/v1745772491/Edumate_j8jqcs.png" style="width:100%; height:auto;" alt="Welcome to Edumate"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:40px 30px 20px 30px;">
+                            <h2 style="margin:0;font-family:Arial,sans-serif;font-size:26px;line-height:34px;color:#333333;">
+                                Chào mừng <span th:text="${userName}">bạn</span> đến với Edumate!
+                            </h2>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:20px 40px;">
+                            <p style="margin:0;font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#666666;">
+                                Edumate giúp bạn giải đáp bài tập, ôn luyện kiến thức nhanh chóng và hiệu quả nhất.
+                                Chỉ cần chụp ảnh bài tập hoặc đặt câu hỏi, bạn sẽ nhận được hướng dẫn chi tiết từ A.I. hoặc từ những người dùng khác.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:30px 40px 10px 40px;">
+                            <p style="margin:0;font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#666666;">
+                                Bắt đầu ngay hôm nay để chinh phục mục tiêu học tập của bạn cùng Edumate!
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:20px;">
+                            <a th:href="${actionUrl}"
+                               style="background-color:#4CAF50;color:#ffffff;padding:14px 28px;text-decoration:none;font-family:Arial,sans-serif;font-size:16px;border-radius:5px;display:inline-block;font-weight:bold;"
+                               th:text="${actionText}">
+                                Khám phá ngay
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:30px 40px 20px 40px;">
+                            <p style="margin:0;font-family:Arial,sans-serif;font-size:12px;color:#999999;">
+                                Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ đội ngũ hỗ trợ của Edumate.<br/>
+                                Xem <a href="https://www.freeprivacypolicy.com/live/b93057c6-82a7-47b7-9af7-5e5ca3870108" style="color:#4CAF50;text-decoration:none;">Chính sách quyền riêng tư</a> của chúng tôi.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding:20px;">
+                            <p style="font-family:Arial,sans-serif;font-size:12px;color:#999999;margin:0;">
+                                © 2025 Edumate. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
