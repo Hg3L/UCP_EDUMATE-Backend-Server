@@ -66,7 +66,7 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     List<Comment> comments = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "comment_likes ",
+    @JoinTable(name = "tbl_comment_likes ",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "comment_id"))
     private List<Comment> commentsLike = new ArrayList<>();

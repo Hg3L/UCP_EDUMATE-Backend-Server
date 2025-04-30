@@ -19,6 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tbl_post")
 public class Post extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

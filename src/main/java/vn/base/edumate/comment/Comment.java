@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tbl_comment")
 public class Comment extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +40,7 @@ public class Comment extends AbstractEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    
+
 
 
 

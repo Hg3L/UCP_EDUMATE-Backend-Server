@@ -15,6 +15,7 @@ import java.sql.Blob;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tbl_image")
 public class Image extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

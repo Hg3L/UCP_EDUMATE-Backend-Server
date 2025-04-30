@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tbl_tag")
 public class Tag extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
