@@ -1,7 +1,7 @@
 package vn.base.edumate.authentication.strategy;
 
-import vn.base.edumate.token.TokenResponse;
 import vn.base.edumate.common.util.AuthType;
+import vn.base.edumate.token.TokenResponse;
 
 public interface AuthServiceStrategy {
 
@@ -10,5 +10,4 @@ public interface AuthServiceStrategy {
     TokenResponse authenticate(Object o);
 
     TokenResponse refreshToken(Object o);
-
 }

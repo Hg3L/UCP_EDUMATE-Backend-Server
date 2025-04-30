@@ -1,23 +1,25 @@
 package vn.base.edumate.user.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import vn.base.edumate.common.base.AbstractEntity;
-import vn.base.edumate.common.util.AuthMethod;
-import vn.base.edumate.common.util.UserStatusCode;
-import vn.base.edumate.role.Role;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import vn.base.edumate.common.base.AbstractEntity;
+import vn.base.edumate.common.util.AuthMethod;
+import vn.base.edumate.common.util.UserStatusCode;
+import vn.base.edumate.role.Role;
 
 @Getter
 @Setter

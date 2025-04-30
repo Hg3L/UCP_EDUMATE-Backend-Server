@@ -1,8 +1,9 @@
 package vn.base.edumate.user.service;
 
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
 import vn.base.edumate.common.util.UserStatusCode;
@@ -18,7 +19,8 @@ public class UserStatusServiceImpl implements UserStatusService {
 
     @Override
     public UserStatus getUserStatusByStatusCode(UserStatusCode userStatusCode) {
-        return userStatusRepository.findByUserStatusCode(userStatusCode)
+        return userStatusRepository
+                .findByUserStatusCode(userStatusCode)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_STATUS_NOT_EXISTED));
     }
 }

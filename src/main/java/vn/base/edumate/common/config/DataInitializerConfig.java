@@ -1,15 +1,20 @@
 package vn.base.edumate.common.config;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import vn.base.edumate.common.enums.TagType;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
 import vn.base.edumate.common.util.AuthMethod;
@@ -17,15 +22,14 @@ import vn.base.edumate.common.util.RoleCode;
 import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.role.Role;
 import vn.base.edumate.role.RoleRepository;
+import vn.base.edumate.tag.Tag;
+import vn.base.edumate.tag.TagRepository;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.entity.UserStatus;
 import vn.base.edumate.user.entity.UserStatusHistory;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.repository.UserStatusHistoryRepository;
 import vn.base.edumate.user.repository.UserStatusRepository;
-
-import java.util.UUID;
-
 
 @Configuration
 @RequiredArgsConstructor
@@ -49,22 +53,26 @@ public class DataInitializerConfig {
             prefix = "spring",
             value = "datasource.driver-class-name",
             havingValue = "org.postgresql.Driver")
-    ApplicationRunner init(final UserRepository userRepository,
-                           final RoleRepository roleRepository,
-                           final UserStatusRepository userStatusRepository,
-                           final UserStatusHistoryRepository userStatusHistoryRepository) {
+    ApplicationRunner init(
+            final UserRepository userRepository,
+            final RoleRepository roleRepository,
+            final TagRepository tagRepository,
+            final UserStatusRepository userStatusRepository,
+            final UserStatusHistoryRepository userStatusHistoryRepository) {
 
         log.info("------------------ Initializing Default Data ------------------");
 
         return args -> {
             createRolesIfNotExist(roleRepository);
             createUserStatusIfNotExist(userStatusRepository);
+            createTagIfNotExist(tagRepository);
 
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
 
                 log.info("Creating default admin account...");
 
-                Role adminRole = roleRepository.findByRoleCode(RoleCode.SYSTEM_ADMIN)
+                Role adminRole = roleRepository
+                        .findByRoleCode(RoleCode.SYSTEM_ADMIN)
                         .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.ROLE_NOT_EXISTED));
 
                 User admin = User.builder()
@@ -77,7 +85,8 @@ public class DataInitializerConfig {
                         .build();
                 userRepository.save(admin);
 
-                 UserStatus userStatus = userStatusRepository.findByUserStatusCode(UserStatusCode.NORMAL)
+                UserStatus userStatus = userStatusRepository
+                        .findByUserStatusCode(UserStatusCode.NORMAL)
                         .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_STATUS_NOT_EXISTED));
 
                 UserStatusHistory adminStatusHistory = UserStatusHistory.builder()
@@ -114,4 +123,14 @@ public class DataInitializerConfig {
         }
     }
 
+    private void createTagIfNotExist(TagRepository tagRepository) {
+        List<Tag> tags = tagRepository.findAll();
+        if (tags.isEmpty()) {
+            Tag tag = Tag.builder()
+                    .tagType(TagType.SHARING_KNOWLEDGE)
+                    .name("Mẹo học tập")
+                    .build();
+            tagRepository.save(tag);
+        }
+    }
 }

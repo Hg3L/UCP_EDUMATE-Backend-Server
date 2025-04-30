@@ -1,11 +1,12 @@
 package vn.base.edumate.user.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.AbstractEntity;
-
-import java.io.Serializable;
 
 @Getter
 @Setter
@@ -30,5 +31,4 @@ public class UserStatusHistory extends AbstractEntity implements Serializable {
 
     @Column(name = "reason", columnDefinition = "TEXT")
     private String reason;
-
 }

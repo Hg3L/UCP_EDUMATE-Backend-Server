@@ -16,5 +16,4 @@ public enum UserStatusCode {
     private final String description;
 
     private final int durationInDays;
-
 }

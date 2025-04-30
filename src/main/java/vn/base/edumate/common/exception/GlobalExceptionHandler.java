@@ -1,16 +1,18 @@
 package vn.base.edumate.common.exception;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import vn.base.edumate.common.base.ErrorResponse;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import vn.base.edumate.common.base.ErrorResponse;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -23,9 +25,9 @@ public class GlobalExceptionHandler {
     /**
      *  Handle runtime exception
      */
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handlingRuntimeException(RuntimeException e, WebRequest request) {
+    public ErrorResponse handlingRuntimeException(Exception e, WebRequest request) {
         log.error("Runtime exception: ", e);
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -90,6 +92,23 @@ public class GlobalExceptionHandler {
     public ErrorResponse handlingInvalidTokenTypeException(InvalidTokenTypeException e, WebRequest request) {
         log.error("Invalid token: ", e);
         ErrorCode errorCode = e.getErrorCode();
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlingMessageNotReadableException(HttpMessageNotReadableException e, WebRequest request) {
+        log.error("Resource not found: ", e.getCause().getMessage());
+        Throwable root = e;
+        while (root.getCause() != null) {
+            root = root.getCause();
+        }
+        ErrorCode errorCode = ErrorCode.valueOf(root.getMessage());
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(errorCode.getStatus())

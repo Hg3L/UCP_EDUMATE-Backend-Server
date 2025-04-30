@@ -1,8 +1,9 @@
 package vn.base.edumate.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -42,7 +43,12 @@ public enum ErrorCode {
      * General error codes (Code skill)
      */
     INVALID_ARGUMENT(HttpStatus.BAD_REQUEST.value(), "Tham số không hợp lệ"),
-    UNCATEGORIZED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Lỗi không xác định");
+    UNCATEGORIZED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Lỗi không xác định"),
+    /**
+     * Tag error codes
+     */
+    TAG_NOT_EXISTED(HttpStatus.NOT_FOUND.value(), "Tag không tồn tại"),
+    TAG_TYPE_NOT_EXISTED(HttpStatus.NOT_FOUND.value(), "Loại tag này không tồn tại");
 
     private final int status;
     private final String message;

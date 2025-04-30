@@ -1,13 +1,14 @@
 package vn.base.edumate.authentication.strategy;
 
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.util.AuthType;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

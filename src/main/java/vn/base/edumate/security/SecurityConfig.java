@@ -1,6 +1,7 @@
 package vn.base.edumate.security;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
 import vn.base.edumate.security.jwt.JwtAuthFilter;
 
 @Configuration
@@ -26,33 +29,29 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    private static final String[] WHITELIST = {
-            "/v1/auth/**"
-    };
+    private static final List<String> WHITELIST = List.of("/v1/auth/**", "/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers(WHITELIST).permitAll()
-                                .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers(WHITELIST.toArray(String[]::new))
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .exceptionHandling(
-                        exceptionHandling -> exceptionHandling
-                                .authenticationEntryPoint(unauthorizedEntryPoint)
-                )
-                .sessionManagement(sessionManager ->
-                        sessionManager
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        exceptionHandling -> exceptionHandling.authenticationEntryPoint(unauthorizedEntryPoint))
+                .sessionManagement(
+                        sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(provider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -68,5 +67,4 @@ public class SecurityConfig {
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

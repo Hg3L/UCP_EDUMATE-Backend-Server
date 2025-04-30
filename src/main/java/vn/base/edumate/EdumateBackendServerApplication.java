@@ -11,5 +11,4 @@ public class EdumateBackendServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(EdumateBackendServerApplication.class, args);
     }
-
 }

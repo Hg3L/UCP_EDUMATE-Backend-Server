@@ -1,23 +1,24 @@
 package vn.base.edumate.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import vn.base.edumate.common.exception.ErrorCode;
-import vn.base.edumate.common.exception.InvalidTokenTypeException;
-import vn.base.edumate.common.util.TokenType;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import vn.base.edumate.common.exception.ErrorCode;
+import vn.base.edumate.common.exception.InvalidTokenTypeException;
+import vn.base.edumate.common.util.TokenType;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -33,7 +34,6 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${system.security.jwt.secretRefreshKey}")
     private String secretRefreshKey;
-
 
     @Override
     public String generateAccessToken(UserDetails userDetails, List<String> authorities) {
@@ -92,8 +92,12 @@ public class JwtServiceImpl implements JwtService {
 
     private Key getKey(TokenType tokenType) {
         switch (tokenType) {
-            case ACCESS_TOKEN -> {return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretAccessKey));}
-            case REFRESH_TOKEN -> {return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretRefreshKey));}
+            case ACCESS_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretAccessKey));
+            }
+            case REFRESH_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretRefreshKey));
+            }
             default -> throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN_TYPE);
         }
     }
@@ -104,8 +108,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims extractAllClaims(String token, TokenType tokenType) {
-        return Jwts
-                .parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(getKey(tokenType))
                 .build()
                 .parseClaimsJws(token)

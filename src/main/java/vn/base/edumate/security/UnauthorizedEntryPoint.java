@@ -1,26 +1,29 @@
 package vn.base.edumate.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.Serializable;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import vn.base.edumate.common.base.ErrorResponse;
 import vn.base.edumate.common.exception.ErrorCode;
-
-import java.io.IOException;
-import java.io.Serializable;
 
 @Component
 public class UnauthorizedEntryPoint implements AuthenticationEntryPoint, Serializable {
 
     @Override
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+    public void commence(
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
 
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 

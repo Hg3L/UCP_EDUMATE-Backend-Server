@@ -1,10 +1,11 @@
 package vn.base.edumate.security.jwt;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import vn.base.edumate.common.util.TokenType;
-
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.security.core.userdetails.UserDetails;
+
+import vn.base.edumate.common.util.TokenType;
 
 public interface JwtService {
 

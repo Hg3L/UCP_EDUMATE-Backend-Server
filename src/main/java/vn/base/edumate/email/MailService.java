@@ -1,9 +1,9 @@
 package vn.base.edumate.email;
 
-import jakarta.mail.MessagingException;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+
+import jakarta.mail.MessagingException;
 
 public interface MailService {
 

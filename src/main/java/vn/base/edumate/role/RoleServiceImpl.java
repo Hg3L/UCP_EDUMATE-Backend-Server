@@ -1,8 +1,9 @@
 package vn.base.edumate.role;
 
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
 import vn.base.edumate.common.util.RoleCode;
@@ -16,7 +17,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getRoleByRoleType(RoleCode roleCode) {
-        return roleRepository.findByRoleCode(roleCode)
+        return roleRepository
+                .findByRoleCode(roleCode)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.ROLE_NOT_EXISTED));
     }
 }

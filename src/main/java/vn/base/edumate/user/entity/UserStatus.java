@@ -1,14 +1,16 @@
 package vn.base.edumate.user.entity;
 
+import java.io.Serializable;
+
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.common.util.UserStatusCode;
-
-import java.io.Serializable;
 
 @Getter
 @Setter

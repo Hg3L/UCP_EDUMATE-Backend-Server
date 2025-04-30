@@ -1,17 +1,19 @@
 package vn.base.edumate.role;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import vn.base.edumate.common.base.AbstractEntity;
-import vn.base.edumate.common.util.RoleCode;
-import vn.base.edumate.user.entity.User;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import vn.base.edumate.common.base.AbstractEntity;
+import vn.base.edumate.common.util.RoleCode;
+import vn.base.edumate.user.entity.User;
 
 @Getter
 @Setter
