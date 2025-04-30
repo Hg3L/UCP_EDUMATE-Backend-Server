@@ -2,6 +2,7 @@ package vn.base.edumate.tag;
 
 import java.util.List;
 
+import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -28,9 +29,10 @@ public class TagController {
 
     @GetMapping("/type/{type}")
     DataResponse<List<TagResponse>> getAllByTagType(@PathVariable("type") TagType tagType) {
+        List<TagResponse> dataResponses = tagService.getTagByType(tagType);
         return DataResponse.<List<TagResponse>>builder()
                 .message(SystemConstant.SUCCESS)
-                .data(tagService.getTagByType(tagType))
+                .data(dataResponses)
                 .build();
     }
 

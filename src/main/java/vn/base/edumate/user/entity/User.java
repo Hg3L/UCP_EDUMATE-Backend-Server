@@ -16,9 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import vn.base.edumate.comment.Comment;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.common.util.AuthMethod;
 import vn.base.edumate.common.util.UserStatusCode;
+import vn.base.edumate.post.Post;
 import vn.base.edumate.role.Role;
 
 @Getter
@@ -57,6 +59,17 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     Role role;
+
+    @OneToMany(mappedBy = "author",orphanRemoval = true, cascade = CascadeType.ALL)
+    List<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    List<Comment> comments = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "comment_likes ",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id"))
+    private List<Comment> commentsLike = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
