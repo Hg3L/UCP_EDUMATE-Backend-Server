@@ -13,7 +13,7 @@ import lombok.Getter;
 public class ErrorResponse {
     @JsonFormat(pattern = "dd/MM/yyyy - HH:mm:ss")
     LocalDateTime timestamp;
-
+    int code;
     int status;
     String path;
     String message;

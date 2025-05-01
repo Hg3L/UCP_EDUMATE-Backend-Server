@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import vn.base.edumate.common.enums.TagType;
+import vn.base.edumate.common.util.TagType;
 
 @Data
 @Builder

@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.common.base.AbstractDTO;
-import vn.base.edumate.common.enums.TagType;
+import vn.base.edumate.common.util.TagType;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

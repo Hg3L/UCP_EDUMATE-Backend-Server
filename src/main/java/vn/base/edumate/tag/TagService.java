@@ -2,7 +2,7 @@ package vn.base.edumate.tag;
 
 import java.util.List;
 
-import vn.base.edumate.common.enums.TagType;
+import vn.base.edumate.common.util.TagType;
 
 public interface TagService {
     List<TagResponse> getAllTags();

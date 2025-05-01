@@ -2,7 +2,6 @@ package vn.base.edumate.tag;
 
 import java.util.List;
 
-import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -10,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.DataResponse;
 import vn.base.edumate.common.constant.SystemConstant;
-import vn.base.edumate.common.enums.TagType;
+import vn.base.edumate.common.util.TagType;
 
 @RestController
 @RequiredArgsConstructor

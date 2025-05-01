@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.common.base.AbstractEntity;
-import vn.base.edumate.common.enums.TagType;
+import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.post.Post;
 
 import java.util.ArrayList;

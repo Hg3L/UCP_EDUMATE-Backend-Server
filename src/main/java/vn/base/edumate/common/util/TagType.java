@@ -1,4 +1,4 @@
-package vn.base.edumate.common.enums;
+package vn.base.edumate.common.util;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

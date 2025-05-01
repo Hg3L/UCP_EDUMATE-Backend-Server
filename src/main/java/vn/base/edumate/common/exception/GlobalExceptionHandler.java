@@ -29,8 +29,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlingRuntimeException(Exception e, WebRequest request) {
         log.error("Runtime exception: ", e);
+
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
+                .code(ErrorCode.UNCATEGORIZED.getCode())
                 .status(ErrorCode.UNCATEGORIZED.getStatus())
                 .path(request.getDescription(showClientInfo).replace("uri=", ""))
                 .message(ErrorCode.UNCATEGORIZED.getMessage())
@@ -47,6 +49,7 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
                 .status(errorCode.getStatus())
                 .path(request.getDescription(showClientInfo).replace("uri=", ""))
                 .message(errorCode.getMessage())
@@ -63,6 +66,7 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
                 .status(errorCode.getStatus())
                 .path(request.getDescription(showClientInfo).replace("uri=", ""))
                 .message(errorCode.getMessage())
@@ -94,6 +98,7 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = e.getErrorCode();
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
                 .status(errorCode.getStatus())
                 .path(request.getDescription(showClientInfo).replace("uri=", ""))
                 .message(errorCode.getMessage())
@@ -111,6 +116,7 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ErrorCode.valueOf(root.getMessage());
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
                 .status(errorCode.getStatus())
                 .path(request.getDescription(showClientInfo).replace("uri=", ""))
                 .message(errorCode.getMessage())
