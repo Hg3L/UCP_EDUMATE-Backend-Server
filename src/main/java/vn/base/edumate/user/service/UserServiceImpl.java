@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
 
     private final RoleService roleService;
 
+    @Transactional
     @Override
     public User createUserFromFirebase(FirebaseToken decodedToken) {
         Role userRole = roleService.getRoleByRoleType(RoleCode.USER);

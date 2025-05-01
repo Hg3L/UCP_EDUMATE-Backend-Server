@@ -47,9 +47,11 @@ public class EmailSender implements MailService {
         mimeMessageHelper.setFrom(from, senderName);
         mimeMessageHelper.setTo(recipient);
         mimeMessageHelper.setSubject(subject);
+
         mimeMessageHelper.setText(htmlContent, true);
 
+
         mailSender.send(mimeMessage);
-        log.info("Email sent successfully to {}", recipient);
+        log.info("Email sent to {} with subject {}", recipient, subject);
     }
 }
