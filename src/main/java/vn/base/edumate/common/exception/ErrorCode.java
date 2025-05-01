@@ -54,8 +54,9 @@ public enum ErrorCode {
      * Tag error codes
      */
     TAG_NOT_EXISTED(1015, HttpStatus.NOT_FOUND.value(), "Tag không tồn tại"),
-    TAG_TYPE_NOT_EXISTED(1016, HttpStatus.NOT_FOUND.value(), "Loại tag này không tồn tại");
+    TAG_TYPE_NOT_EXISTED(1016, HttpStatus.NOT_FOUND.value(), "Loại tag này không tồn tại"),
 
+    POST_NOT_EXISTED(1016,HttpStatus.NOT_FOUND.value(), "Bài viết không tồn tại");
     private final int code;
     private final int status;
     private final String message;

@@ -2,6 +2,7 @@ package vn.base.edumate.tag;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ import vn.base.edumate.common.util.TagType;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TagController {
     TagService tagService;
-
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     DataResponse<List<TagResponse>> getAll() {
         return DataResponse.<List<TagResponse>>builder()

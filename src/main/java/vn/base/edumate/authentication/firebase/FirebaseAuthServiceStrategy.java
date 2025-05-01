@@ -103,7 +103,7 @@ public class FirebaseAuthServiceStrategy implements AuthServiceStrategy {
             throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN);
         }
 
-        var user = userDetailsService.loadUserByUsername(
+        var user = (User) userDetailsService.loadUserByUsername(
                 jwtService.extractIdentifier(refreshToken, TokenType.REFRESH_TOKEN));
 
         if (!jwtService.validateToken(refreshToken, TokenType.REFRESH_TOKEN, user)) {

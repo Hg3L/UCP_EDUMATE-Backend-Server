@@ -9,5 +9,7 @@ public interface TagService {
 
     List<TagResponse> getTagByType(TagType type);
 
+    TagResponse getTagById(Long id);
+
     TagResponse createTag(CreateTagRequest createTagRequest);
 }

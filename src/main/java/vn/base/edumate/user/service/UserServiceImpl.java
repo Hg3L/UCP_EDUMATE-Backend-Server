@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
@@ -107,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(String userId) {
-        return null;
+        return userRepository.findById(userId).orElseThrow(() -> new BaseApplicationException(ErrorCode.USER_NOT_EXISTED));
     }
 
     @Override

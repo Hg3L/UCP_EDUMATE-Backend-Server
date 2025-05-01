@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import vn.base.edumate.common.util.TokenType;
+import vn.base.edumate.user.entity.User;
 
 public interface JwtService {
 
@@ -17,5 +18,5 @@ public interface JwtService {
 
     Date extractExpiration(String token, TokenType tokenType);
 
-    boolean validateToken(String token, TokenType tokenType, UserDetails userDetails);
+    boolean validateToken(String token, TokenType tokenType, User userDetails);
 }

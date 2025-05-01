@@ -58,9 +58,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public boolean validateToken(String token, TokenType tokenType, UserDetails userDetails) {
+    public boolean validateToken(String token, TokenType tokenType, User userDetails) {
+        
         final String username = extractIdentifier(token, tokenType);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token, tokenType);
+        return username.equals(userDetails.getId()) && !isTokenExpired(token, tokenType);
     }
 
     private boolean isTokenExpired(String token, TokenType tokenType) {
@@ -79,7 +80,7 @@ public class JwtServiceImpl implements JwtService {
                     .setClaims(claims)
                     .setSubject(userId)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * accessExpiration))
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * accessExpiration ))
                     .signWith(getKey(TokenType.ACCESS_TOKEN), SignatureAlgorithm.HS256)
                     .compact();
             case REFRESH_TOKEN -> Jwts.builder()

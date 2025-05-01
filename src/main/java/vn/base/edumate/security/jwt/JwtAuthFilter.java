@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.base.edumate.common.util.TokenType;
 import vn.base.edumate.security.CustomUserDetailsService;
+import vn.base.edumate.user.entity.User;
 
 @Component
 @Slf4j
@@ -56,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String uid = jwtService.extractIdentifier(token, TokenType.ACCESS_TOKEN);
 
         if (StringUtils.isNotEmpty(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            var userDetails = customUserDetailsService.loadUserByUsername(uid);
+            User userDetails = (User) customUserDetailsService.loadUserByUsername(uid);
 
             if (jwtService.validateToken(token, TokenType.ACCESS_TOKEN, userDetails)) {
 

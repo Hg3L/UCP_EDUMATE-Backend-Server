@@ -41,6 +41,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public TagResponse getTagById(Long id) {
+        return null;
+    }
+
+    @Override
     public TagResponse createTag(CreateTagRequest createTagRequest) {
         return tagMapper.toResponse(tagRepository.save(tagMapper.toModel(createTagRequest)));
     }
