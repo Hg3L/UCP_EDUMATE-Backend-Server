@@ -32,7 +32,6 @@ public class EmailSender implements MailService {
     @Value("${system.default.email.name}")
     private String senderName;
 
-    @Async
     @Override
     public void sendEmailWithTemplate(String recipient, String templateName, Map<String, Object> variables)
             throws MessagingException, UnsupportedEncodingException {
