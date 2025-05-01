@@ -30,7 +30,6 @@ public class Role extends AbstractEntity implements Serializable {
     Integer id;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "role_type")
     RoleCode roleCode;
 

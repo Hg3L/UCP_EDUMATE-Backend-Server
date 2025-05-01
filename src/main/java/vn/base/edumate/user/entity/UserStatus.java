@@ -26,7 +26,6 @@ public class UserStatus extends AbstractEntity implements Serializable {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status_code")
     private UserStatusCode userStatusCode;
 

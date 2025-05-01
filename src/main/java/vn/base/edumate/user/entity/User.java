@@ -49,7 +49,6 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     String username;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "auth_method")
     AuthMethod authMethod;
 

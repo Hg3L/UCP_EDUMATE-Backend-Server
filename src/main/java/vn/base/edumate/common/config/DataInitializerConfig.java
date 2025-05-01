@@ -64,11 +64,12 @@ public class DataInitializerConfig {
 
         return args -> {
 
+            createRolesIfNotExist(roleRepository);
+            createUserStatusIfNotExist(userStatusRepository);
+            createTagIfNotExist(tagRepository);
 
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
-                createRolesIfNotExist(roleRepository);
-                createUserStatusIfNotExist(userStatusRepository);
-                createTagIfNotExist(tagRepository);
+
 
                 log.info("Creating default admin account...");
 
