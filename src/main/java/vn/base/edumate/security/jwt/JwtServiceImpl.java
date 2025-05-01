@@ -19,6 +19,7 @@ import io.jsonwebtoken.security.Keys;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.common.util.TokenType;
+import vn.base.edumate.user.entity.User;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -52,13 +53,13 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String extractUsername(String token, TokenType tokenType) {
+    public String extractIdentifier(String token, TokenType tokenType) {
         return extractClaim(token, tokenType, Claims::getSubject);
     }
 
     @Override
     public boolean validateToken(String token, TokenType tokenType, UserDetails userDetails) {
-        final String username = extractUsername(token, tokenType);
+        final String username = extractIdentifier(token, tokenType);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token, tokenType);
     }
 
@@ -72,17 +73,18 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(Map<String, Object> claims, UserDetails userDetails, TokenType tokenType) {
+        String userId = ((User) userDetails).getId();
         return switch (tokenType) {
             case ACCESS_TOKEN -> Jwts.builder()
                     .setClaims(claims)
-                    .setSubject(userDetails.getUsername())
+                    .setSubject(userId)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * accessExpiration))
                     .signWith(getKey(TokenType.ACCESS_TOKEN), SignatureAlgorithm.HS256)
                     .compact();
             case REFRESH_TOKEN -> Jwts.builder()
                     .setClaims(claims)
-                    .setSubject(userDetails.getUsername())
+                    .setSubject(userId)
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * refreshExpiration))
                     .signWith(getKey(TokenType.REFRESH_TOKEN), SignatureAlgorithm.HS256)

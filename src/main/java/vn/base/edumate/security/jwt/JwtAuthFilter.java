@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String token = header.substring("Bearer ".length());
         log.info("Token: {}", token);
 
-        final String uid = jwtService.extractUsername(token, TokenType.ACCESS_TOKEN);
+        final String uid = jwtService.extractIdentifier(token, TokenType.ACCESS_TOKEN);
 
         if (StringUtils.isNotEmpty(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
             var userDetails = customUserDetailsService.loadUserByUsername(uid);
