@@ -28,6 +28,8 @@ public class Post extends AbstractEntity {
     private String title;
     @Column(name = "content")
     private String content;
+    @Column
+    private Integer likeCount = 0;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "tag_id")
     private Tag tag;
@@ -38,5 +40,6 @@ public class Post extends AbstractEntity {
     private List<Image> images = new ArrayList<>();
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
 
 }

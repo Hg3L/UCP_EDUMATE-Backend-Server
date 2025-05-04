@@ -70,6 +70,12 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "comment_id"))
     private List<Comment> commentsLike = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "tbl_post_likes ",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    private List<Post> postsLike = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.getRoleCode()));

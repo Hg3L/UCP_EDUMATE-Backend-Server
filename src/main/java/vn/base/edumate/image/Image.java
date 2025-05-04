@@ -23,7 +23,11 @@ public class Image extends AbstractEntity {
     @Lob
     @Column(nullable = false)
     private Blob imageBytes;
-    @Column(nullable = false,name = "image_url")
+    @Column
+    private String fileName;
+    @Column
+    private String fileType;
+    @Column(nullable = true,name = "image_url")
     private String imageUrl;
     @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "post_id")
