@@ -10,8 +10,8 @@ import vn.base.edumate.image.Image;
 import vn.base.edumate.post.Post;
 import vn.base.edumate.user.entity.User;
 
-import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 @SuperBuilder
@@ -25,12 +25,16 @@ public class Comment extends AbstractEntity {
     private Long id;
     @Column(nullable = false)
     private String content;
-    @OneToOne(cascade = CascadeType.ALL)
+    @Column(nullable = true)
+    private int likes = 0;
+    @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id")
     private Image image;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_comment_id")
     private Comment parent;
+    @OneToMany(mappedBy = "parent")
+    private List<Comment> children;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "post_id")

@@ -1,0 +1,65 @@
+package vn.base.edumate.comment;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import vn.base.edumate.common.base.DataResponse;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("comment")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+public class CommentController {
+    CommentService commentService;
+    
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public DataResponse<CommentResponse> createComment(@RequestParam Long postId,@RequestBody CreateCommentRequest request) {
+        return DataResponse.<CommentResponse>builder()
+                .message("đăng bình luận thành công")
+                .data(commentService.createComment(postId,request))
+                .build();
+    }
+    @GetMapping("/post/{postId}")
+    public DataResponse<List<CommentResponse>> getCommentByPostId(@PathVariable("postId") Long postId) {
+        return DataResponse.<List<CommentResponse>>builder()
+                .data(commentService.getCommentsByPostId(postId))
+                .message("tìm thành công")
+                .build();
+    }
+    @PutMapping("like/{commentId}")
+    @PreAuthorize("hasRole('USER')")
+    DataResponse<Integer> likePost(@PathVariable("commentId") Long commentId) {
+        return DataResponse.<Integer>builder()
+                .message("Like bình luận thành công")
+                .data(commentService.Like(commentId))
+                .build();
+    }
+    @GetMapping("/{commentId}")
+    public DataResponse<CommentResponse> getCommentById(@PathVariable("commentId") Long commentId) {
+        return DataResponse.<CommentResponse> builder()
+                .message("success")
+                .data(commentService.getCommentById(commentId))
+                .build();
+    }
+    @PostMapping("/{parentId}/replies")
+    @PreAuthorize("hasRole('USER')")
+    public DataResponse<CommentResponse> saveReply(@PathVariable Long parentId,
+                                                   @RequestBody CreateCommentRequest createCommentRequest) {
+        return DataResponse.<CommentResponse>builder()
+                .data(commentService.createChildComment(createCommentRequest,parentId))
+                .message("success")
+                .build();
+    }
+    @GetMapping("/{parentId}/replies")
+    public DataResponse<List<CommentResponse>> getReplies(@PathVariable Long parentId) {
+        return DataResponse.<List<CommentResponse>>builder()
+                .data(commentService.getCommentsByParentCommentId(parentId))
+                .message("success")
+                .build();
+    }
+}

@@ -23,5 +23,6 @@ public class PostResponse extends AbstractDTO {
     private UserResponse author;
     private TagResponse tag;
     private Integer likeCount;
+    private Integer commentCount;
     private List<ImageResponse> images;
 }

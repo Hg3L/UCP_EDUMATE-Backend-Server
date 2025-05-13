@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import vn.base.edumate.comment.Comment;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.post.Post;
 
@@ -30,6 +31,8 @@ public class Image extends AbstractEntity {
     @Column(nullable = true,name = "image_url")
     private String imageUrl;
     @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
-    @JoinColumn(name = "post_id")
     private Post post;
+    @OneToOne(mappedBy = "image")
+    private Comment comment;
+
 }

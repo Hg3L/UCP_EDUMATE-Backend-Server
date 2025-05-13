@@ -24,13 +24,11 @@ import static org.springframework.http.HttpStatus.OK;
 public class ImageController {
     private final ImageService imageService;
     @PostMapping
-    DataResponse<List<ImageResponse>> saveImage(@RequestParam List<MultipartFile> multipartFiles,
-                                              @RequestParam Long postId) throws SQLException, IOException {
-        List<ImageResponse> imageResponses =  imageService.saveImage(multipartFiles,postId);
+    DataResponse<List<ImageResponse>> saveImage(@RequestParam List<MultipartFile> multipartFiles) throws SQLException, IOException {
+        List<ImageResponse> imageResponses =  imageService.saveImage(multipartFiles);
         return DataResponse.<List<ImageResponse>>builder()
                 .message("Thêm ảnh thành công!")
                 .data(imageResponses).build();
-
     }
     @GetMapping("/{imageId}")
     ResponseEntity<Resource> downloadImage(@PathVariable("imageId") Long imageId) throws SQLException {
@@ -44,7 +42,9 @@ public class ImageController {
     }
     @DeleteMapping("/{imageId}")
     DataResponse<Void> deleteImage(@PathVariable("imageId") Long imageId)  {
+        imageService.deleteById(imageId);
         return DataResponse.<Void>builder()
+
                 .message("xóa ảnh thành công")
                 .build();
     }

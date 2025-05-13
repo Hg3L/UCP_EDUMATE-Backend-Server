@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(String userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new BaseApplicationException(ErrorCode.USER_NOT_EXISTED));
+        return userRepository.findById(userId).orElse(null);
     }
 
     @Override

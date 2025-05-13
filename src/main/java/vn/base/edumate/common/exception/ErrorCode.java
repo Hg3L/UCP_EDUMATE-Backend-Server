@@ -62,7 +62,11 @@ public enum ErrorCode {
     /**
      * Image error codes
      */
-    IMAGE_NOT_EXISTED(1017,HttpStatus.NOT_FOUND.value(), "Ảnh không tồn tại");
+    IMAGE_NOT_EXISTED(1017,HttpStatus.NOT_FOUND.value(), "Ảnh không tồn tại"),
+    /**
+     * Comment error codes
+     */
+    COMMENT_NOT_EXISTED(1018,HttpStatus.NOT_FOUND.value(), "Comment không tồn tại");
     private final int code;
     private final int status;
     private final String message;

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.util.TagType;
+import vn.base.edumate.image.Image;
+import vn.base.edumate.image.ImageRepository;
 import vn.base.edumate.tag.Tag;
 import vn.base.edumate.tag.TagRepository;
 
@@ -27,6 +29,7 @@ public class PostServiceImpl implements PostService {
     PostRepository postRepository;
     PostMapper postMapper;
     UserRepository userRepository;
+    ImageRepository imageRepository;
     UserService userService;
     TagRepository tagRepository;
 
@@ -42,10 +45,18 @@ public class PostServiceImpl implements PostService {
         User user = userService.getCurrentUser();
         Tag tag =  tagRepository.findById(createPostRequest.getTagId())
                 .orElseThrow( () -> new BaseApplicationException(ErrorCode.TAG_NOT_EXISTED));
+        if(createPostRequest.getImageIds() != null){
+            List<Long> imageIds = createPostRequest.getImageIds();
+            List<Image> images = imageRepository.findAllById(imageIds);
+            post.setImages(images);
+        }
+        post.setLikeCount(0);
         post.setTag(tag);
         post.setAuthor(user);
+        PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
 
-        return postMapper.toResponse(postRepository.save(post)) ;
+        postResponse.setCommentCount(post.getComments() == null ? 0 : post.getComments().size() );
+        return  postResponse;
     }
 
     @Override
@@ -55,7 +66,11 @@ public class PostServiceImpl implements PostService {
                         .filter(list -> !list.isEmpty())
                         .ifPresentOrElse(
                 posts -> postsResponse.set(posts.stream()
-                        .map(postMapper::toResponse)
+                        .map(post -> {
+                            PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
+                            postResponse.setCommentCount(post.getComments().size());
+                            return postResponse;
+                        })
                         .toList())
                 ,() -> { throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);}
         );
@@ -69,7 +84,14 @@ public class PostServiceImpl implements PostService {
                 .filter(list -> !list.isEmpty())
                 .ifPresentOrElse(
                 posts -> postsResponse.set(posts.stream()
-                        .map(postMapper::toResponse)
+                        .map(post -> {
+                            PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
+                            postResponse.setCommentCount(post.getComments().stream()
+                                    .filter(comment -> comment.getParent() == null)
+                                    .toList()
+                                    .size()) ;
+                            return postResponse;
+                        })
                         .toList())
                 ,() -> { throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);}
         );
@@ -91,5 +113,11 @@ public class PostServiceImpl implements PostService {
             post.setLikeCount(post.getLikeCount() + 1);
         }
         return postRepository.save(post).getLikeCount();
+    }
+
+    @Override
+    public PostResponse getPostResponseById(Long id) {
+        return postMapper.toResponse(postRepository.findById(id)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED)));
     }
 }

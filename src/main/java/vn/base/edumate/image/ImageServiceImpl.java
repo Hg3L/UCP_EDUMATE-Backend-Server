@@ -42,17 +42,15 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-
-    public List<ImageResponse> saveImage(List<MultipartFile> multipartFiles, Long postId) throws SQLException, IOException {
+    public List<ImageResponse> saveImage(List<MultipartFile> multipartFiles) throws SQLException, IOException {
         List<ImageResponse> imageResponses = new ArrayList<>();
-        Post post =  postService.getPostById(postId);
+
         try{
             for(MultipartFile file : multipartFiles){
                 Image image = Image.builder()
                         .fileName(file.getOriginalFilename())
                         .imageBytes(new SerialBlob(file.getBytes()))
                         .fileType(file.getContentType())
-                        .post(post)
                         .build();
                 imageRepository.save(image);
                 String imageUrl = "/image/"+image.getId();

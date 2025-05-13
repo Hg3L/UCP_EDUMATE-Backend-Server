@@ -28,7 +28,7 @@ public class PostController {
     }
 
     @GetMapping("/tag/{id}")
-    DataResponse<List<PostResponse>> getPost(@PathVariable("id") Long tagId) {
+    DataResponse<List<PostResponse>> getPostByTag(@PathVariable("id") Long tagId) {
         return DataResponse.<List<PostResponse>>builder()
                 .message("Tìm thấy bài viết")
                 .data(postService.getPostsByTag(tagId))
@@ -49,4 +49,12 @@ public class PostController {
                 .data(postService.likePost(postId))
                 .build();
     }
+    @GetMapping("/{id}")
+    DataResponse<PostResponse> getPostById(@PathVariable("id") Long id) {
+        return DataResponse.<PostResponse>builder()
+                .message("tìm bài viết thành công")
+                .data(postService.getPostResponseById(id))
+                .build();
+    }
+
 }

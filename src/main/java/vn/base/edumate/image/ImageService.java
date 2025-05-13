@@ -12,7 +12,7 @@ public interface ImageService {
 
     void deleteById(Long id);
 
-    List<ImageResponse> saveImage(List<MultipartFile> multipartFiles, Long postId) throws SQLException, IOException;
+    List<ImageResponse> saveImage(List<MultipartFile> multipartFiles) throws SQLException, IOException;
 
     List<ImageResponse> getImagesByPostId(Long postId);
 
