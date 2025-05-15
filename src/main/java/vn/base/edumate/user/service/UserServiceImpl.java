@@ -6,6 +6,7 @@ import java.util.Map;
 
 import jakarta.mail.MessagingException;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.auth.FirebaseToken;
@@ -108,7 +109,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(String userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new BaseApplicationException(ErrorCode.USER_NOT_EXISTED));
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        User principal=  (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return getUserById(principal.getId());
+
     }
 
     @Override

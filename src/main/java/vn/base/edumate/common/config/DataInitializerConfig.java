@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
@@ -35,6 +36,7 @@ import vn.base.edumate.user.repository.UserStatusRepository;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Slf4j
+@Transactional
 public class DataInitializerConfig {
 
     final PasswordEncoder passwordEncoder;
@@ -49,6 +51,7 @@ public class DataInitializerConfig {
     String adminPassword;
 
     @Bean
+
     @ConditionalOnProperty(
             prefix = "spring",
             value = "datasource.driver-class-name",
@@ -100,7 +103,7 @@ public class DataInitializerConfig {
         };
     }
 
-    private void createRolesIfNotExist(RoleRepository roleRepository) {
+    public void createRolesIfNotExist(RoleRepository roleRepository) {
         for (RoleCode roleCode : RoleCode.values()) {
             if (roleRepository.findByRoleCode(roleCode).isEmpty()) {
                 roleRepository.save(Role.builder()
@@ -112,7 +115,7 @@ public class DataInitializerConfig {
         }
     }
 
-    private void createUserStatusIfNotExist(UserStatusRepository userStatusRepository) {
+    public void createUserStatusIfNotExist(UserStatusRepository userStatusRepository) {
         for (UserStatusCode userStatusCode : UserStatusCode.values()) {
             if (userStatusRepository.findByUserStatusCode(userStatusCode).isEmpty()) {
                 userStatusRepository.save(UserStatus.builder()
@@ -125,7 +128,7 @@ public class DataInitializerConfig {
         }
     }
 
-    private void createTagIfNotExist(TagRepository tagRepository) {
+    public void createTagIfNotExist(TagRepository tagRepository) {
         List<Tag> tags = tagRepository.findAll();
         if (tags.isEmpty()) {
             Tag tag = Tag.builder()

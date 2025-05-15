@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.common.base.AbstractDTO;
+import vn.base.edumate.image.ImageResponse;
+import vn.base.edumate.tag.TagResponse;
+import vn.base.edumate.user.dto.UserResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,9 @@ import java.util.List;
 public class PostResponse extends AbstractDTO {
     private String content;
     private String title;
-    private String authorName;
-    private String tagName;
-    private List<String> imageUrls = new ArrayList<>();
+    private UserResponse author;
+    private TagResponse tag;
+    private Integer likeCount;
+    private Integer commentCount;
+    private List<ImageResponse> images;
 }

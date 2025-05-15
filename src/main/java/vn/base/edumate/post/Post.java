@@ -28,15 +28,19 @@ public class Post extends AbstractEntity {
     private String title;
     @Column(name = "content")
     private String content;
+    @Column(name = "likeCount",nullable = false)
+    private Integer likeCount = 0;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "tag_id")
     private Tag tag;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "user_id")
     private User author;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private List<Image> images = new ArrayList<>();
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
 
 }
