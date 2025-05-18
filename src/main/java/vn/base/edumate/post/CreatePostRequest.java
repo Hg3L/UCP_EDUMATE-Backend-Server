@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @Builder
 public class CreatePostRequest {
+    private Long id;
     private String title;
     private String content;
     private Long tagId;

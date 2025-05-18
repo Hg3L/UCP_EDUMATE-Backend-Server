@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PostService {
     Post getPostById(Long id);
-    PostResponse createPost(CreatePostRequest createPostRequest);
+    PostResponse savePost(CreatePostRequest createPostRequest);
     List<PostResponse> getPostsByTag(Long tagId);
     List<PostResponse> getPostByTagType(TagType tagType);
     int likePost(Long postId) ;

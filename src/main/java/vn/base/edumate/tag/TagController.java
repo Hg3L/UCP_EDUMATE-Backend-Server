@@ -18,7 +18,7 @@ import vn.base.edumate.common.util.TagType;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TagController {
     TagService tagService;
-    @PreAuthorize("hasRole('USER')")
+
     @GetMapping
     DataResponse<List<TagResponse>> getAll() {
         return DataResponse.<List<TagResponse>>builder()

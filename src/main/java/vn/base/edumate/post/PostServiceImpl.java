@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.util.TagType;
@@ -24,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostServiceImpl implements PostService {
     PostRepository postRepository;
@@ -40,23 +42,41 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse createPost(CreatePostRequest createPostRequest)  {
-        Post post = postMapper.toModel(createPostRequest);
-        User user = userService.getCurrentUser();
-        Tag tag =  tagRepository.findById(createPostRequest.getTagId())
-                .orElseThrow( () -> new BaseApplicationException(ErrorCode.TAG_NOT_EXISTED));
-        if(createPostRequest.getImageIds() != null){
-            List<Long> imageIds = createPostRequest.getImageIds();
-            List<Image> images = imageRepository.findAllById(imageIds);
-            post.setImages(images);
-        }
-        post.setLikeCount(0);
-        post.setTag(tag);
-        post.setAuthor(user);
-        PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
+    public PostResponse savePost(CreatePostRequest createPostRequest)  {
+        if(createPostRequest.getId() != null ){
+            Post post = getPostById(createPostRequest.getId());
+            postMapper.updatePost(post, createPostRequest);
+            if(createPostRequest.getImageIds() != null){
+                List<Long> imageIds = createPostRequest.getImageIds();
+                List<Image> images = imageRepository.findAllById(imageIds);
+                post.setImages(images);
+            }
+            else{
+                post.setImages(null);
+            }
 
-        postResponse.setCommentCount(post.getComments() == null ? 0 : post.getComments().size() );
-        return  postResponse;
+            return postMapper.toResponse(postRepository.save(post));
+
+        }
+        else{
+            Post post = postMapper.toModel(createPostRequest);
+            User user = userService.getCurrentUser();
+            Tag tag =  tagRepository.findById(createPostRequest.getTagId())
+                    .orElseThrow( () -> new BaseApplicationException(ErrorCode.TAG_NOT_EXISTED));
+            if(createPostRequest.getImageIds() != null){
+                List<Long> imageIds = createPostRequest.getImageIds();
+                List<Image> images = imageRepository.findAllById(imageIds);
+                post.setImages(images);
+            }
+            post.setLikeCount(0);
+            post.setTag(tag);
+            post.setAuthor(user);
+            PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
+
+            postResponse.setCommentCount(post.getComments() == null ? 0 : post.getComments().size() );
+            return  postResponse;
+        }
+
     }
 
     @Override
