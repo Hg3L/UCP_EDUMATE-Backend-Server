@@ -31,7 +31,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    private static final List<String> WHITELIST = List.of("/v1/auth/**", "/**");
+    private static final List<String> WHITELIST = List.of("/v1/auth/**", "/**", "/v1/gemini/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

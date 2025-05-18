@@ -59,6 +59,11 @@ system:
     api_key: 312721116553145
     api_secret: qMNWZd-5kKoa-tEZbrkH6HSYepY
 
+  gcloud-project:
+    id: edumate-458118
+    region: us-central1
+    model: gemini-2.0-flash
+
 
 
 
