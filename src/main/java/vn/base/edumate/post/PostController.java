@@ -23,7 +23,7 @@ public class PostController {
     DataResponse<PostResponse> createPost(@RequestBody CreatePostRequest request) {
         return DataResponse.<PostResponse>builder()
                 .message("Thêm bài viết thành công!")
-                .data(postService.createPost(request))
+                .data(postService.savePost(request))
                 .build();
     }
 

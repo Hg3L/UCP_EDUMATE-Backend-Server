@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.base.edumate.common.base.DataResponse;
+import vn.base.edumate.common.util.ImageNsfwUtil;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,11 +25,12 @@ import static org.springframework.http.HttpStatus.OK;
 public class ImageController {
     private final ImageService imageService;
     @PostMapping
-    DataResponse<List<ImageResponse>> saveImage(@RequestParam List<MultipartFile> multipartFiles) throws SQLException, IOException {
-        List<ImageResponse> imageResponses =  imageService.saveImage(multipartFiles);
+    public DataResponse<?> saveImage(@RequestParam List<MultipartFile> multipartFiles) throws IOException, SQLException {
+        List<ImageResponse> imageResponses = imageService.saveImage(multipartFiles);
         return DataResponse.<List<ImageResponse>>builder()
                 .message("Thêm ảnh thành công!")
-                .data(imageResponses).build();
+                .data(imageResponses)
+                .build();
     }
     @GetMapping("/{imageId}")
     ResponseEntity<Resource> downloadImage(@PathVariable("imageId") Long imageId) throws SQLException {
