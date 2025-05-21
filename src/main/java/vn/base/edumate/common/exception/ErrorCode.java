@@ -27,6 +27,7 @@ public enum ErrorCode {
     UNAUTHORIZED(1006, HttpStatus.UNAUTHORIZED.value(), "Người dùng không có quyền truy cập"),
     UNAUTHENTICATED(1007, HttpStatus.UNAUTHORIZED.value(), "Người dùng chưa xác thực"),
 
+
     /**
      * Mail error codes
      */
@@ -66,7 +67,12 @@ public enum ErrorCode {
     /**
      * Comment error codes
      */
-    COMMENT_NOT_EXISTED(1018,HttpStatus.NOT_FOUND.value(), "Comment không tồn tại");
+    COMMENT_NOT_EXISTED(1018,HttpStatus.NOT_FOUND.value(), "Comment không tồn tại"),
+    /**
+     * Report error codes
+     */
+    REPORT_EXISTED_BY_USER (1019,HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này");
+
     private final int code;
     private final int status;
     private final String message;

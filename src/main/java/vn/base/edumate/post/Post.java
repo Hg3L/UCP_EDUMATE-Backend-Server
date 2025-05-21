@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.comment.Comment;
 import vn.base.edumate.common.base.AbstractEntity;
+import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.image.Image;
 import vn.base.edumate.tag.Tag;
 import vn.base.edumate.user.entity.User;
@@ -30,6 +31,9 @@ public class Post extends AbstractEntity {
     private String content;
     @Column(name = "likeCount",nullable = false)
     private Integer likeCount = 0;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private PostStatus status = PostStatus.ACTIVE;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(name = "tag_id")
     private Tag tag;
@@ -41,6 +45,7 @@ public class Post extends AbstractEntity {
     private List<Image> images = new ArrayList<>();
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
 
 
 }

@@ -2,6 +2,7 @@ package vn.base.edumate.common.exception;
 
 import java.time.LocalDateTime;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -122,4 +123,18 @@ public class GlobalExceptionHandler {
                 .message(errorCode.getMessage())
                 .build();
     }
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handlingExpiredJwtException(ExpiredJwtException e, WebRequest request) {
+        log.error("Invalid token: ", e);
+        ErrorCode errorCode = ErrorCode.EXPIRED_TOKEN;
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(errorCode.getMessage())
+                .build();
+    }
+
 }

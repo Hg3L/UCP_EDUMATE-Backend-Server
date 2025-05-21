@@ -8,8 +8,6 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +15,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.comment.Comment;
+import vn.base.edumate.commentlike.CommentLike;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.common.util.AuthMethod;
 import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.post.Post;
+import vn.base.edumate.postlike.PostLike;
 import vn.base.edumate.role.Role;
 
 @Getter
@@ -64,17 +64,12 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
     List<Comment> comments = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "tbl_comment_likes ",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "comment_id"))
-    private List<Comment> commentsLike = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "tbl_post_likes ",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id"))
-    private List<Post> postsLike = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLike> postLikes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> commentLikes = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

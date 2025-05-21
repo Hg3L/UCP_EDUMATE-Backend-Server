@@ -1,5 +1,6 @@
 package vn.base.edumate.authentication.firebase;
 
+import com.google.api.client.auth.oauth2.RefreshTokenRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ public class FirebaseAuthController {
     public ResponseEntity<TokenResponse> authenticate(@Valid @RequestBody TokenRequest request) {
         AuthServiceStrategy authServiceStrategy = authStrategyContext.getAuthServiceStrategy(AuthType.FIREBASE);
         TokenResponse tokenResponse = authServiceStrategy.authenticate(request);
+        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
+    }
+    @PostMapping("/refresh-token")
+    public ResponseEntity<TokenResponse> refreshToken(@Valid @RequestBody TokenRequest request) {
+        AuthServiceStrategy authServiceStrategy = authStrategyContext.getAuthServiceStrategy(AuthType.FIREBASE);
+        TokenResponse tokenResponse = authServiceStrategy.refreshToken(request);
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 }

@@ -56,5 +56,12 @@ public class PostController {
                 .data(postService.getPostResponseById(id))
                 .build();
     }
+    @DeleteMapping("/{id}")
+    DataResponse<Integer> deletePost(@PathVariable("id") Long id) {
+        postService.deletePost(id);
+        return DataResponse.<Integer>builder()
+                .message("Xóa bài viết thành công")
+                .build();
+    }
 
 }

@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import vn.base.edumate.commentlike.CommentLike;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.image.Image;
 import vn.base.edumate.post.Post;
 import vn.base.edumate.user.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,6 +41,8 @@ public class Comment extends AbstractEntity {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "post_id")
     private Post post;
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> commentLikes = new ArrayList<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id")
