@@ -13,4 +13,5 @@ public interface PostService {
     List<PostResponse> getPostByTagType(TagType tagType);
     int likePost(Long postId) ;
     PostResponse getPostResponseById(Long id);
+    void deletePost(Long id);
 }

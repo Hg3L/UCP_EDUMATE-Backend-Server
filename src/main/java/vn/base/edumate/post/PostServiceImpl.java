@@ -6,11 +6,15 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.base.edumate.comment.Comment;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
+import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.image.Image;
 import vn.base.edumate.image.ImageRepository;
+import vn.base.edumate.postlike.PostLike;
+import vn.base.edumate.postlike.PostLikeRepository;
 import vn.base.edumate.tag.Tag;
 import vn.base.edumate.tag.TagRepository;
 
@@ -20,6 +24,7 @@ import vn.base.edumate.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -34,6 +39,7 @@ public class PostServiceImpl implements PostService {
     ImageRepository imageRepository;
     UserService userService;
     TagRepository tagRepository;
+    PostLikeRepository postLikeRepository;
 
     @Override
     public Post getPostById(Long id) {
@@ -55,6 +61,7 @@ public class PostServiceImpl implements PostService {
                 post.setImages(null);
             }
 
+
             return postMapper.toResponse(postRepository.save(post));
 
         }
@@ -71,6 +78,7 @@ public class PostServiceImpl implements PostService {
             post.setLikeCount(0);
             post.setTag(tag);
             post.setAuthor(user);
+            post.setStatus(PostStatus.ACTIVE);
             PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
 
             postResponse.setCommentCount(post.getComments() == null ? 0 : post.getComments().size() );
@@ -100,7 +108,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostResponse> getPostByTagType(TagType tagType) {
         AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
-        postRepository.findByTagTagType(tagType)
+        postRepository.findByTagTagTypeAndStatus(tagType,PostStatus.ACTIVE)
                 .filter(list -> !list.isEmpty())
                 .ifPresentOrElse(
                 posts -> postsResponse.set(posts.stream()
@@ -121,23 +129,36 @@ public class PostServiceImpl implements PostService {
     @Override
     public int likePost(Long postId) {
         User user = userService.getCurrentUser();
-        Post post = getPostById(postId);
-        if(user.getPostsLike().contains(post)) {
-            user.getPostsLike().remove(post);
-            userRepository.save(user);
-            post.setLikeCount(post.getLikeCount() -1);
-        }
-        else{
-            user.getPostsLike().add(post);
-            userRepository.save(user);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED));
+
+        Optional<PostLike> existing = postLikeRepository.findByUserAndPost(user, post);
+
+        if (existing.isPresent()) {
+            postLikeRepository.delete(existing.get());
+            post.setLikeCount(post.getLikeCount() - 1);
+        } else {
+            PostLike like = PostLike.builder()
+                    .user(user)
+                    .post(post)
+                    .build();
+            postLikeRepository.save(like);
             post.setLikeCount(post.getLikeCount() + 1);
         }
-        return postRepository.save(post).getLikeCount();
+        postRepository.save(post);
+        return post.getLikeCount();
     }
 
     @Override
     public PostResponse getPostResponseById(Long id) {
         return postMapper.toResponse(postRepository.findById(id)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED)));
+    }
+
+    @Override
+    public void deletePost(Long id) {
+        Post post = getPostById(id);
+
+        postRepository.delete(post);
     }
 }

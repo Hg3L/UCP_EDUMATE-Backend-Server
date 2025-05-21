@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.base.edumate.commentlike.CommentLike;
+import vn.base.edumate.commentlike.CommentLikeRepository;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.image.Image;
@@ -17,6 +19,7 @@ import vn.base.edumate.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -29,25 +32,35 @@ public class CommentServiceImpl implements CommentService {
     UserRepository userRepository;
     PostService postService;
     ImageRepository imageRepository;
+    CommentLikeRepository commentLikeRepository;
     CommentMapper commentMapper;
-    @Override
 
+    @Override
     public int Like(Long commentId) {
         User user = userService.getCurrentUser();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED));
-        if(user.getCommentsLike().contains(comment)) {
-            user.getCommentsLike().remove(comment);
-            userRepository.save(user);
-            comment.setLikes(comment.getLikes() -1);
-        }
-        else{
-            user.getCommentsLike().add(comment);
-            userRepository.save(user);
+
+        Optional<CommentLike> existingLike = commentLikeRepository.findByUserAndComment(user, comment);
+
+        if (existingLike.isPresent()) {
+            // User đã like → unlike
+            commentLikeRepository.delete(existingLike.get());
+            comment.setLikes(comment.getLikes() - 1);
+        } else {
+            // Chưa like → thêm like
+            CommentLike newLike = CommentLike.builder()
+                    .user(user)
+                    .comment(comment)
+                    .build();
+            commentLikeRepository.save(newLike);
             comment.setLikes(comment.getLikes() + 1);
         }
-        return commentRepository.save(comment).getLikes();
+
+        commentRepository.save(comment);
+        return comment.getLikes();
     }
+
 
     @Override
     public CommentResponse createComment(Long postId, CreateCommentRequest createCommentRequest) {
