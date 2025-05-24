@@ -1,9 +1,10 @@
 package vn.base.edumate.post_report;
 
+import org.springframework.stereotype.Service;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.post.Post;
@@ -18,10 +19,12 @@ public class PostReportServiceImpl implements PostReportService {
     UserService userService;
     PostRepository postRepository;
     PostReportRepository reportRepository;
+
     @Override
     public void reportPost(Long postId, ReportRequest reason) {
         User currentUser = userService.getCurrentUser();
-        Post post = postRepository.findById(postId)
+        Post post = postRepository
+                .findById(postId)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED));
 
         // Kiểm tra đã report chưa (tuỳ chọn)

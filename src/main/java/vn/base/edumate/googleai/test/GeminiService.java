@@ -1,20 +1,21 @@
 package vn.base.edumate.googleai.test;
 
-import com.google.cloud.vertexai.api.Content;
-import com.google.cloud.vertexai.api.GenerateContentResponse;
-import com.google.cloud.vertexai.api.Part;
-import com.google.cloud.vertexai.generativeai.ContentMaker;
-import com.google.cloud.vertexai.generativeai.GenerativeModel;
-import com.google.cloud.vertexai.generativeai.PartMaker;
-import com.google.cloud.vertexai.generativeai.ResponseHandler;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.google.cloud.vertexai.api.Content;
+import com.google.cloud.vertexai.api.GenerateContentResponse;
+import com.google.cloud.vertexai.api.Part;
+import com.google.cloud.vertexai.generativeai.GenerativeModel;
+import com.google.cloud.vertexai.generativeai.PartMaker;
+import com.google.cloud.vertexai.generativeai.ResponseHandler;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,8 @@ public class GeminiService {
 
             for (MultipartFile file : images) {
                 if (!file.isEmpty()) {
-                    parts.add(PartMaker.fromMimeTypeAndData(Objects.requireNonNull(file.getContentType()), file.getBytes()));
+                    parts.add(PartMaker.fromMimeTypeAndData(
+                            Objects.requireNonNull(file.getContentType()), file.getBytes()));
                 }
             }
 
@@ -39,9 +41,7 @@ public class GeminiService {
                     .addAllParts(parts)
                     .build();
 
-            GenerateContentResponse response = generativeModel.generateContent(
-                    List.of(content)
-            );
+            GenerateContentResponse response = generativeModel.generateContent(List.of(content));
 
             return ResponseHandler.getText(response);
         } catch (Exception e) {
@@ -50,4 +50,3 @@ public class GeminiService {
         }
     }
 }
-

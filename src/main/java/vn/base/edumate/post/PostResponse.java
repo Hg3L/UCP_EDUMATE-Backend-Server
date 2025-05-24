@@ -1,7 +1,9 @@
 package vn.base.edumate.post;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -9,9 +11,6 @@ import vn.base.edumate.common.base.AbstractDTO;
 import vn.base.edumate.image.ImageResponse;
 import vn.base.edumate.tag.TagResponse;
 import vn.base.edumate.user.dto.UserResponse;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

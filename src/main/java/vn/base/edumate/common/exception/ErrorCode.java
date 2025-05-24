@@ -27,7 +27,6 @@ public enum ErrorCode {
     UNAUTHORIZED(1006, HttpStatus.UNAUTHORIZED.value(), "Người dùng không có quyền truy cập"),
     UNAUTHENTICATED(1007, HttpStatus.UNAUTHORIZED.value(), "Người dùng chưa xác thực"),
 
-
     /**
      * Mail error codes
      */
@@ -59,19 +58,19 @@ public enum ErrorCode {
     /**
      * Post error codes
      */
-    POST_NOT_EXISTED(1016,HttpStatus.NOT_FOUND.value(), "Bài viết không tồn tại"),
+    POST_NOT_EXISTED(1016, HttpStatus.NOT_FOUND.value(), "Bài viết không tồn tại"),
     /**
      * Image error codes
      */
-    IMAGE_NOT_EXISTED(1017,HttpStatus.NOT_FOUND.value(), "Ảnh không tồn tại"),
+    IMAGE_NOT_EXISTED(1017, HttpStatus.NOT_FOUND.value(), "Ảnh không tồn tại"),
     /**
      * Comment error codes
      */
-    COMMENT_NOT_EXISTED(1018,HttpStatus.NOT_FOUND.value(), "Comment không tồn tại"),
+    COMMENT_NOT_EXISTED(1018, HttpStatus.NOT_FOUND.value(), "Comment không tồn tại"),
     /**
      * Report error codes
      */
-    REPORT_EXISTED_BY_USER (1019,HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này");
+    REPORT_EXISTED_BY_USER(1019, HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này");
 
     private final int code;
     private final int status;

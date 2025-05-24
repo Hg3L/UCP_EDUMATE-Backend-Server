@@ -1,13 +1,12 @@
 package vn.base.edumate.post_report;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.post.Post;
 import vn.base.edumate.user.entity.User;
-
-
 
 @SuperBuilder
 @Getter
@@ -27,6 +26,4 @@ public class PostReport extends AbstractEntity {
 
     @Column(nullable = false)
     private String reason;
-
-
 }

@@ -3,6 +3,7 @@ package vn.base.edumate.common.base;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,8 +20,10 @@ public class AbstractDTO {
     long id;
     String createdBy;
     String updatedBy;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/M/yyyy")
     Date createdAt;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/M/yyyy")
     Date updatedAt;
 }

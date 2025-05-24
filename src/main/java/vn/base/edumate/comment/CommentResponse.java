@@ -10,8 +10,6 @@ import vn.base.edumate.image.ImageResponse;
 import vn.base.edumate.post.PostResponse;
 import vn.base.edumate.user.dto.UserResponse;
 
-import java.util.List;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)

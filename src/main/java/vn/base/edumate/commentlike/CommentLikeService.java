@@ -1,6 +1,3 @@
 package vn.base.edumate.commentlike;
 
-
-public class CommentLikeService {
-
-}
+public class CommentLikeService {}
