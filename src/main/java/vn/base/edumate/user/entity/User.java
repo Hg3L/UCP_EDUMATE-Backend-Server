@@ -20,9 +20,11 @@ import vn.base.edumate.commentlike.CommentLike;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.common.util.AuthMethod;
 import vn.base.edumate.common.util.UserStatusCode;
+import vn.base.edumate.history.ai.AISearch;
 import vn.base.edumate.post.Post;
 import vn.base.edumate.postlike.PostLike;
 import vn.base.edumate.role.Role;
+import vn.base.edumate.token.Token;
 
 @Getter
 @Setter
@@ -70,6 +72,9 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", orphanRemoval = true, cascade = CascadeType.ALL)
     List<Post> posts = new ArrayList<>();

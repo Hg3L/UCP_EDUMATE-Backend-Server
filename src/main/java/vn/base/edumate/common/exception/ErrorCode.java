@@ -71,6 +71,11 @@ public enum ErrorCode {
      * Report error codes
      */
     REPORT_EXISTED_BY_USER(1019, HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này");
+    REPORT_EXISTED_BY_USER (1019,HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này"),
+    /**
+     * Report error codes
+     */
+    HISTORY_NOT_EXISTED(1020, HttpStatus.NOT_FOUND.value(), "Lịch sử không tồn tại");
 
     private final int code;
     private final int status;

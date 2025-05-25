@@ -23,8 +23,10 @@ import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.common.util.AuthType;
 import vn.base.edumate.common.util.TokenType;
 import vn.base.edumate.security.jwt.JwtService;
+import vn.base.edumate.token.Token;
 import vn.base.edumate.token.TokenRequest;
 import vn.base.edumate.token.TokenResponse;
+import vn.base.edumate.token.TokenService;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.service.UserService;
 
@@ -38,6 +40,8 @@ public class FirebaseAuthServiceStrategy implements AuthServiceStrategy {
     private final UserDetailsService userDetailsService;
 
     private final JwtService jwtService;
+
+    private final TokenService tokenService;
 
     @Override
     public boolean support(AuthType authType) {
@@ -85,6 +89,25 @@ public class FirebaseAuthServiceStrategy implements AuthServiceStrategy {
                 .extractExpiration(refreshToken, TokenType.REFRESH_TOKEN)
                 .getTime();
 
+        Token accessTokenDb = Token.builder()
+                .token(accessToken)
+                .tokenType(TokenType.ACCESS_TOKEN)
+                .revoked(false)
+                .expired(false)
+                .user(user)
+                .build();
+
+        Token refreshTokenDb = Token.builder()
+                .token(refreshToken)
+                .tokenType(TokenType.REFRESH_TOKEN)
+                .revoked(false)
+                .expired(false)
+                .user(user)
+                .build();
+
+        tokenService.saveAllToken(List.of(accessTokenDb, refreshTokenDb));
+        log.info("Token saved successfully");
+
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -103,10 +126,18 @@ public class FirebaseAuthServiceStrategy implements AuthServiceStrategy {
             throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN);
         }
 
-        var user = (User) userDetailsService.loadUserByUsername(
-                jwtService.extractIdentifier(refreshToken, TokenType.REFRESH_TOKEN));
+        String uid = jwtService.extractIdentifier(refreshToken, TokenType.REFRESH_TOKEN);
+
+        if(uid == null || StringUtils.isBlank(uid)) {
+            throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN);
+        }
+
+        var user = (User) userDetailsService.loadUserByUsername(uid);
 
         if (!jwtService.validateToken(refreshToken, TokenType.REFRESH_TOKEN, user)) {
+            var rToken = tokenService.getToken(refreshToken);
+            rToken.setExpired(true);
+            tokenService.saveToken(rToken);
             throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN);
         }
 
@@ -119,6 +150,14 @@ public class FirebaseAuthServiceStrategy implements AuthServiceStrategy {
                 .toList();
 
         String accessToken = jwtService.generateAccessToken(user, authorities);
+
+        tokenService.saveToken(Token.builder()
+                .token(accessToken)
+                .tokenType(TokenType.ACCESS_TOKEN)
+                .revoked(false)
+                .expired(false)
+                .build());
+
         long accessTokenExpiresIn = jwtService
                 .extractExpiration(accessToken, TokenType.ACCESS_TOKEN)
                 .getTime();
