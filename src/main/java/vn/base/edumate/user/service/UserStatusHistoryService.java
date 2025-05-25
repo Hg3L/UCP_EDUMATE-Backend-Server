@@ -1,10 +1,10 @@
 package vn.base.edumate.user.service;
 
-import vn.base.edumate.user.entity.UserStatusHistory;
+import vn.base.edumate.user.dto.request.CreateUserStatusHistory;
 
 public interface UserStatusHistoryService {
     /**
      * Used by another service
      */
-    void saveUserStatusHistory(UserStatusHistory userStatusHistory);
+    Integer saveUserStatusHistoryIfUserViolation(String userId, CreateUserStatusHistory createUserStatusHistory);
 }

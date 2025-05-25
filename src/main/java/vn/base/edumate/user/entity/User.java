@@ -1,6 +1,7 @@
 package vn.base.edumate.user.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +55,17 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     @Column(name = "auth_method")
     AuthMethod authMethod;
 
+    @Column(name = "violation_count", nullable = true)
+    private int violationCount = 0;
+
+    @Column(name = "expired_at")
+    private LocalDateTime expiredAt;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private UserStatusCode status = UserStatusCode.NORMAL;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<UserStatusHistory> statusHistories = new ArrayList<>();
 
@@ -64,20 +76,24 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     @OneToMany(mappedBy = "user")
     private List<Token> tokens = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<AISearch> AISearches = new ArrayList<>();
-
     @OneToMany(mappedBy = "author", orphanRemoval = true, cascade = CascadeType.ALL)
     List<Post> posts = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Comment> comments = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLike> postLikes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLike> commentLikes = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_user_post_hidden",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    private List<Post> hiddenPosts = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

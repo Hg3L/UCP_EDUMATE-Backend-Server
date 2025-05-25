@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import jakarta.persistence.*;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.AbstractEntity;

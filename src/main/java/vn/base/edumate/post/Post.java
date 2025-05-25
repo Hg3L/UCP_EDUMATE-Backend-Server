@@ -1,6 +1,10 @@
 package vn.base.edumate.post;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,9 +16,6 @@ import vn.base.edumate.image.Image;
 import vn.base.edumate.tag.Tag;
 import vn.base.edumate.user.entity.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @SuperBuilder
 @Getter
@@ -25,27 +26,32 @@ public class Post extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "title")
     private String title;
+
     @Column(name = "content")
     private String content;
-    @Column(name = "likeCount",nullable = false)
+
+    @Column(name = "likeCount", nullable = false)
     private Integer likeCount = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PostStatus status = PostStatus.ACTIVE;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "tag_id")
     private Tag tag;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "user_id")
     private User author;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private List<Image> images = new ArrayList<>();
-    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL,orphanRemoval = true)
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
-
-
-
 }

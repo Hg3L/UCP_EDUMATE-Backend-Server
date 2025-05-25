@@ -1,6 +1,5 @@
 package vn.base.edumate.post_report;
 
-
 import lombok.Builder;
 import lombok.Data;
 

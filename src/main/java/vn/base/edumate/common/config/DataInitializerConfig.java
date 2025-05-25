@@ -9,17 +9,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
 import vn.base.edumate.common.util.AuthMethod;
 import vn.base.edumate.common.util.RoleCode;
+import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.role.Role;
 import vn.base.edumate.role.RoleRepository;
@@ -51,7 +51,6 @@ public class DataInitializerConfig {
     String adminPassword;
 
     @Bean
-
     @ConditionalOnProperty(
             prefix = "spring",
             value = "datasource.driver-class-name",
@@ -66,13 +65,11 @@ public class DataInitializerConfig {
         log.info("------------------ Initializing Default Data ------------------");
 
         return args -> {
-
             createRolesIfNotExist(roleRepository);
             createUserStatusIfNotExist(userStatusRepository);
             createTagIfNotExist(tagRepository);
 
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
-
 
                 log.info("Creating default admin account...");
 

@@ -1,10 +1,16 @@
 package vn.base.edumate.comment;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import vn.base.edumate.commentlike.CommentLike;
 import vn.base.edumate.commentlike.CommentLikeRepository;
 import vn.base.edumate.common.exception.BaseApplicationException;
@@ -17,14 +23,9 @@ import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Transactional
 public class CommentServiceImpl implements CommentService {
     CommentRepository commentRepository;
@@ -38,7 +39,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public int Like(Long commentId) {
         User user = userService.getCurrentUser();
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository
+                .findById(commentId)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED));
 
         Optional<CommentLike> existingLike = commentLikeRepository.findByUserAndComment(user, comment);
@@ -49,10 +51,8 @@ public class CommentServiceImpl implements CommentService {
             comment.setLikes(comment.getLikes() - 1);
         } else {
             // Chưa like → thêm like
-            CommentLike newLike = CommentLike.builder()
-                    .user(user)
-                    .comment(comment)
-                    .build();
+            CommentLike newLike =
+                    CommentLike.builder().user(user).comment(comment).build();
             commentLikeRepository.save(newLike);
             comment.setLikes(comment.getLikes() + 1);
         }
@@ -61,14 +61,14 @@ public class CommentServiceImpl implements CommentService {
         return comment.getLikes();
     }
 
-
     @Override
     public CommentResponse createComment(Long postId, CreateCommentRequest createCommentRequest) {
         User user = userService.getCurrentUser();
         Post post = postService.getPostById(postId);
         Comment comment = commentMapper.toModel(createCommentRequest);
-        if(createCommentRequest.getImageId() != null) {
-            Image image = imageRepository.findById(createCommentRequest.getImageId()).orElse(null);
+        if (createCommentRequest.getImageId() != null) {
+            Image image =
+                    imageRepository.findById(createCommentRequest.getImageId()).orElse(null);
             comment.setImage(image);
         }
         comment.setUser(user);
@@ -79,37 +79,41 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponse> getCommentsByPostId(Long postId) {
         AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
-         commentRepository.findByPostId(postId)
-                .ifPresentOrElse(comments ->
-           commentsResponse.set(comments.stream()
-
-                   .map(commentMapper::toResponse)
-                   .toList())
-        , () -> {throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);});
+        commentRepository
+                .findByPostId(postId)
+                .ifPresentOrElse(
+                        comments -> commentsResponse.set(
+                                comments.stream().map(commentMapper::toResponse).toList()),
+                        () -> {
+                            throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);
+                        });
         return commentsResponse.get();
     }
 
     @Override
     public CommentResponse getCommentById(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository
+                .findById(commentId)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED));
         return commentMapper.toResponse(comment);
     }
 
     @Override
     @Transactional
-    public CommentResponse createChildComment(CreateCommentRequest createCommentRequest,Long parentCommentId) {
+    public CommentResponse createChildComment(CreateCommentRequest createCommentRequest, Long parentCommentId) {
         User user = userService.getCurrentUser();
         Comment comment = commentMapper.toModel(createCommentRequest);
 
-        Comment parent = commentRepository.findById(parentCommentId)
+        Comment parent = commentRepository
+                .findById(parentCommentId)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED));
         Post post = postService.getPostById(parent.getPost().getId());
         comment.setParent(parent);
         comment.setPost(post);
         comment.setUser(user);
-        if(createCommentRequest.getImageId() != null) {
-            Image image = imageRepository.findById(createCommentRequest.getImageId())
+        if (createCommentRequest.getImageId() != null) {
+            Image image = imageRepository
+                    .findById(createCommentRequest.getImageId())
                     .orElseThrow(() -> new BaseApplicationException(ErrorCode.IMAGE_NOT_EXISTED));
             comment.setImage(image);
         }
@@ -119,12 +123,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponse> getCommentsByParentCommentId(Long parentCommentId) {
         AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
-        commentRepository.findByParentId(parentCommentId).ifPresentOrElse(comments ->
-                commentsResponse.set(comments.stream()
-                        .map(commentMapper::toResponse)
-                        .toList())
-
-                ,() -> {throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);});
+        commentRepository
+                .findByParentId(parentCommentId)
+                .ifPresentOrElse(
+                        comments -> commentsResponse.set(
+                                comments.stream().map(commentMapper::toResponse).toList()),
+                        () -> {
+                            throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);
+                        });
         return commentsResponse.get();
     }
 }

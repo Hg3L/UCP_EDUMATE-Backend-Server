@@ -1,10 +1,11 @@
 package vn.base.edumate.common.config;
 
-import com.google.cloud.vertexai.VertexAI;
-import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.google.cloud.vertexai.VertexAI;
+import com.google.cloud.vertexai.generativeai.GenerativeModel;
 
 @Configuration
 public class GeminiConfig {
@@ -27,5 +28,4 @@ public class GeminiConfig {
     public GenerativeModel generativeModel(VertexAI vertexAI) {
         return new GenerativeModel(modelName, vertexAI);
     }
-
 }

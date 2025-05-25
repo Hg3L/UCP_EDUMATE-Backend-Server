@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
+import vn.base.edumate.common.util.TagType;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +32,7 @@ public class TagServiceImpl implements TagService {
                 .findByTagType(type)
                 .ifPresentOrElse(
                         tags -> tagResponses.set(
-                                    tags.stream().map(tagMapper::toResponse).toList())
-                        ,
+                                tags.stream().map(tagMapper::toResponse).toList()),
                         () -> {
                             throw new ResourceNotFoundException(ErrorCode.TAG_NOT_EXISTED);
                         });

@@ -8,13 +8,12 @@ import jakarta.mail.MessagingException;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.firebase.auth.FirebaseToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
@@ -114,9 +113,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser() {
-        User principal=  (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return getUserById(principal.getId());
-
     }
 
     @Override
@@ -125,5 +124,10 @@ public class UserServiceImpl implements UserService {
             log.error("User not found with email: {}", email);
             return new ResourceNotFoundException(ErrorCode.USER_NOT_EXISTED);
         });
+    }
+
+    @Override
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 }
