@@ -70,8 +70,7 @@ public enum ErrorCode {
     /**
      * Report error codes
      */
-    REPORT_EXISTED_BY_USER(1019, HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này");
-    REPORT_EXISTED_BY_USER (1019,HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này"),
+    REPORT_EXISTED_BY_USER(1019, HttpStatus.CONFLICT.value(), "Bạn đã tố cáo bài viết này"),
     /**
      * Report error codes
      */
