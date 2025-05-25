@@ -22,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.base.edumate.common.util.TokenType;
 import vn.base.edumate.security.CustomUserDetailsService;
+import vn.base.edumate.token.Token;
+import vn.base.edumate.token.TokenService;
 import vn.base.edumate.user.entity.User;
 
 @Component
@@ -33,6 +35,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
 
     private final JwtService jwtService;
+
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(
@@ -68,6 +72,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 context.setAuthentication(authenticationToken);
                 SecurityContextHolder.setContext(context);
+            }
+            else {
+                Token accessToken = tokenService.getToken(token);
+                if (accessToken != null) {
+                    accessToken.setExpired(true);
+                    tokenService.saveToken(accessToken);
+                }
             }
         }
 

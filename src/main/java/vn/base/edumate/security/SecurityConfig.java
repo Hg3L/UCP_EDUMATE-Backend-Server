@@ -12,12 +12,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import vn.base.edumate.security.jwt.JwtAuthFilter;
 
 @Configuration
@@ -30,6 +32,8 @@ public class SecurityConfig {
     private final UnauthorizedEntryPoint unauthorizedEntryPoint;
 
     private final CustomUserDetailsService customUserDetailsService;
+
+    private final LogoutHandler logoutHandler;
 
     private static final List<String> WHITELIST = List.of("/v1/auth/**", "/**", "/v1/gemini/**");
 
@@ -47,7 +51,13 @@ public class SecurityConfig {
                 .sessionManagement(
                         sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(provider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout ->
+                        logout.logoutUrl("/logout")
+                                .addLogoutHandler(logoutHandler)
+                                .logoutSuccessHandler(
+                                        (request, response, authentication) ->
+                                                SecurityContextHolder.clearContext()));
         return httpSecurity.build();
     }
 
