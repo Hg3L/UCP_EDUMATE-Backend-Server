@@ -16,6 +16,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userStatusInterceptor).addPathPatterns("/post"); // Áp dụng cho toàn bộ API
+        registry.addInterceptor(userStatusInterceptor).addPathPatterns("/post")
+                .addPathPatterns("/post/like/**")
+                .addPathPatterns("/image")
+                .addPathPatterns("/comment")
+                .addPathPatterns("/comment/like/**").
+                addPathPatterns("/comment/*/replies"); // Áp dụng cho
     }
 }

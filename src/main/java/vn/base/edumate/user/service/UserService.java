@@ -2,7 +2,9 @@ package vn.base.edumate.user.service;
 
 import com.google.firebase.auth.FirebaseToken;
 
+import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.entity.User;
+import vn.base.edumate.user.repository.UserRepository;
 
 public interface UserService {
 
@@ -18,6 +20,7 @@ public interface UserService {
     User getUserById(String userId);
 
     User getCurrentUser();
+    UserResponse getCurrentUserToResponse();
 
     User getUserByEmail(String email);
 
