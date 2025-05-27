@@ -55,8 +55,8 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
     @Column(name = "auth_method")
     AuthMethod authMethod;
 
-    @Column(name = "violation_count", nullable = true)
-    private int violationCount = 0;
+    @Column(name = "violation_count")
+    private Integer violationCount = 0;
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;

@@ -35,7 +35,11 @@ public class SecurityConfig {
 
     private final LogoutHandler logoutHandler;
 
-    private static final List<String> WHITELIST = List.of("/v1/auth/**", "/**", "/v1/gemini/**");
+    private static final List<String> WHITELIST = List.of("/v1/auth/**",
+            "/**",
+            "/v1/gemini/**",
+            "/history/ai-search/history-image/**",
+            "/favicon.ico");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

@@ -19,7 +19,7 @@ spring:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   thymeleaf:
     prefix: classpath:/templates/email/
     suffix: .html
@@ -30,7 +30,11 @@ spring:
 
 
 system:
-  server-link: http://localhost:8080
+  glide-client:
+    local-address: http://10.0.2.2:8080
+    lan-address-wifi-1: http://192.168.1.71:8080
+    lan-address-wifi-2: http://192.168.1.72:8080
+    lan-address-iphone: http://http://172.20.10.5:8080
   default:
     email:
       from: edumate.working@gmail.com
