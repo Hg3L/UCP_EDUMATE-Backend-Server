@@ -24,9 +24,11 @@ import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.email.MailService;
 import vn.base.edumate.role.Role;
 import vn.base.edumate.role.RoleService;
+import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.entity.UserStatus;
 import vn.base.edumate.user.entity.UserStatusHistory;
+import vn.base.edumate.user.mapper.UserMapper;
 import vn.base.edumate.user.repository.UserRepository;
 
 @Service
@@ -41,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final UserStatusService userStatusService;
 
     private final RoleService roleService;
+    private final UserMapper userMapper;
 
     @Transactional
     @Override
@@ -116,6 +119,14 @@ public class UserServiceImpl implements UserService {
         User principal =
                 (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return getUserById(principal.getId());
+    }
+
+    @Override
+    public UserResponse getCurrentUserToResponse() {
+        User principal =
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return userMapper.toUserResponse(principal);
     }
 
     @Override

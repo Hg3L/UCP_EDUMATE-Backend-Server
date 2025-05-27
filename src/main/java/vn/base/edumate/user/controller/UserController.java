@@ -6,7 +6,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.DataResponse;
+import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.dto.request.CreateUserStatusHistory;
+import vn.base.edumate.user.service.UserService;
 import vn.base.edumate.user.service.UserStatusHistoryService;
 
 @RestController
@@ -15,6 +17,7 @@ import vn.base.edumate.user.service.UserStatusHistoryService;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
     UserStatusHistoryService userStatusHistoryService;
+    UserService userService;
 
     @PostMapping("/{userId}/status-histories")
     public DataResponse<Integer> createUserStatusHistoryIfUserViolation(
@@ -23,6 +26,13 @@ public class UserController {
         return DataResponse.<Integer>builder()
                 .message("thêm trạng thái user thành công")
                 .data(userStatusHistoryService.saveUserStatusHistoryIfUserViolation(userId, createUserStatusHistory))
+                .build();
+    }
+    @GetMapping("/current-user")
+    public DataResponse<UserResponse> getCurrentUser() {
+        return DataResponse.<UserResponse>builder()
+                .message("success")
+                .data(userService.getCurrentUserToResponse())
                 .build();
     }
 }
