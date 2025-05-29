@@ -133,4 +133,20 @@ public class CommentServiceImpl implements CommentService {
                         });
         return commentsResponse.get();
     }
+
+    @Override
+    public List<CommentResponse> getCommentsAndRepliesByCurrentUser() {
+        User user = userService.getCurrentUser();
+        String userId = user.getId();
+        AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
+        commentRepository
+                .findByUserId(userId)
+                .ifPresentOrElse(
+                        comments -> commentsResponse.set(
+                                comments.stream().map(commentMapper::toResponse).toList()),
+                        () -> {
+                            throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);
+                        });
+        return commentsResponse.get();
+    }
 }

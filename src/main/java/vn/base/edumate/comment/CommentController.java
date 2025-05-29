@@ -51,6 +51,14 @@ public class CommentController {
                 .data(commentService.getCommentById(commentId))
                 .build();
     }
+    @GetMapping("by-current-user")
+    @PreAuthorize("hasRole('USER')")
+    public DataResponse<List<CommentResponse>> getCommentById() {
+        return DataResponse.<List<CommentResponse>>builder()
+                .message("success")
+                .data(commentService.getCommentsAndRepliesByCurrentUser())
+                .build();
+    }
 
     @PostMapping("/{parentId}/replies")
     @PreAuthorize("hasRole('USER')")

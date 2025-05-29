@@ -25,6 +25,8 @@ import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.service.UserService;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -130,6 +132,41 @@ public class PostServiceImpl implements PostService {
                             throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);
                         });
 
+        return postsResponse.get();
+    }
+
+    @Override
+    public List<PostResponse> getPostsByUserId(String userId) {
+        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+        postRepository.findByAuthorId(userId).ifPresentOrElse(posts -> {
+            postsResponse.set(posts.stream().map( post -> {
+                PostResponse postResponse = postMapper.toResponse(post);
+                postResponse.setCommentCount(post.getComments().stream()
+                        .filter(comment -> comment.getParent() == null)
+                        .toList()
+                        .size());
+                return postResponse;
+            })
+                    .toList());
+        },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
+        return postsResponse.get();
+    }
+
+    @Override
+    public List<PostResponse> getPostByCurrentUserLike() {
+        User user = userService.getCurrentUser();
+        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+        Optional.ofNullable(user.getPostLikes()).ifPresentOrElse(posts -> {
+            List<Post> postList = posts.stream().map(PostLike::getPost).toList();
+             postsResponse.set(postList.stream().map(post -> {
+                 PostResponse postResponse = postMapper.toResponse(post);
+                 postResponse.setCommentCount(post.getComments().stream()
+                         .filter(comment -> comment.getParent() == null)
+                         .toList()
+                         .size());
+                 return postResponse;
+             }).toList());
+        },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
         return postsResponse.get();
     }
 

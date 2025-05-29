@@ -14,4 +14,5 @@ public interface CommentService {
     CommentResponse createChildComment(CreateCommentRequest createCommentRequest, Long parentCommentId);
 
     List<CommentResponse> getCommentsByParentCommentId(Long parentCommentId);
+    List<CommentResponse> getCommentsAndRepliesByCurrentUser();
 }
