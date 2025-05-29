@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
@@ -114,6 +115,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId).orElse(null);
     }
 
+
     @Override
     public User getCurrentUser() {
         User principal =
@@ -121,13 +123,19 @@ public class UserServiceImpl implements UserService {
         return getUserById(principal.getId());
     }
 
+
     @Override
     public UserResponse getCurrentUserToResponse() {
-        User principal =
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User principal = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = principal.getId();
 
-        return userMapper.toUserResponse(principal);
+        // Load user từ database kèm posts (cách 1 dùng EntityGraph, cách 2 dùng fetch join)
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.USER_NOT_EXISTED));
+
+        return userMapper.toUserResponse(user);
     }
+
 
     @Override
     public User getUserByEmail(String email) {

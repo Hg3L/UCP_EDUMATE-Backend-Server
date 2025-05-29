@@ -2,9 +2,12 @@ package vn.base.edumate.user.service;
 
 import com.google.firebase.auth.FirebaseToken;
 
+import vn.base.edumate.post.PostResponse;
 import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -25,4 +28,5 @@ public interface UserService {
     User getUserByEmail(String email);
 
     void saveUser(User user);
+
 }

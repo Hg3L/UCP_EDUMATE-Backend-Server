@@ -43,7 +43,21 @@ public class PostController {
                 .data(postService.getPostByTagType(type))
                 .build();
     }
-
+    @GetMapping("/by-user/{userId}")
+    @PreAuthorize("hasRole('USER')")
+    DataResponse<List<PostResponse>> getPostsByUserId(@PathVariable("userId") String userId) {
+        return  DataResponse.<List<PostResponse>>builder()
+                .message("success")
+                .data(postService.getPostsByUserId(userId))
+                .build();
+    }
+    @GetMapping("/by-user-like")
+    DataResponse<List<PostResponse>> getPostsByUserId() {
+        return  DataResponse.<List<PostResponse>>builder()
+                .message("success")
+                .data(postService.getPostByCurrentUserLike())
+                .build();
+    }
     @PutMapping("like/{postId}")
     @PreAuthorize("hasRole('USER')")
     DataResponse<Integer> likePost(@PathVariable("postId") Long postId) {
