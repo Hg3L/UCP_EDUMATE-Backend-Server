@@ -1,5 +1,6 @@
 package vn.base.edumate.post;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import vn.base.edumate.common.util.TagType;
@@ -9,11 +10,11 @@ public interface PostService {
 
     PostResponse savePost(CreatePostRequest createPostRequest);
 
-    List<PostResponse> getPostsByTag(Long tagId);
+    LinkedHashSet<PostResponse> getPostsByTag(Long tagId);
 
-    List<PostResponse> getPostByTagType(TagType tagType);
-    List<PostResponse> getPostsByUserId(String userId);
-    List<PostResponse> getPostByCurrentUserLike();
+    LinkedHashSet<PostResponse> getPostByTagType(TagType tagType);
+    LinkedHashSet<PostResponse> getPostsByUserId(String userId);
+    LinkedHashSet<PostResponse> getPostByCurrentUserLike();
 
     int likePost(Long postId);
 

@@ -1,8 +1,10 @@
 package vn.base.edumate.post;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -28,8 +30,8 @@ public class PostController {
     }
 
     @GetMapping("/tag/{id}")
-    DataResponse<List<PostResponse>> getPostByTag(@PathVariable("id") Long tagId) {
-        return DataResponse.<List<PostResponse>>builder()
+    DataResponse<LinkedHashSet<PostResponse>> getPostByTag(@PathVariable("id") Long tagId) {
+        return DataResponse.<LinkedHashSet<PostResponse>>builder()
                 .message("Tìm thấy bài viết")
                 .data(postService.getPostsByTag(tagId))
                 .build();
@@ -37,23 +39,24 @@ public class PostController {
 
     @GetMapping("/tag/type/{type}")
     @PreAuthorize("hasRole('USER')")
-    DataResponse<List<PostResponse>> getPostsByTagType(@PathVariable("type") TagType type) {
-        return DataResponse.<List<PostResponse>>builder()
+    DataResponse<LinkedHashSet<PostResponse>> getPostsByTagType(@PathVariable("type") TagType type) {
+        LinkedHashSet<PostResponse> linkedHashSetDataResponse = postService.getPostByTagType(type);
+        return DataResponse.<LinkedHashSet<PostResponse>>builder()
                 .message("Tìm thấy bài viết")
-                .data(postService.getPostByTagType(type))
+                .data(linkedHashSetDataResponse)
                 .build();
     }
     @GetMapping("/by-user/{userId}")
     @PreAuthorize("hasRole('USER')")
-    DataResponse<List<PostResponse>> getPostsByUserId(@PathVariable("userId") String userId) {
-        return  DataResponse.<List<PostResponse>>builder()
+    DataResponse<LinkedHashSet<PostResponse>> getPostsByUserId(@PathVariable("userId") String userId) {
+        return  DataResponse.<LinkedHashSet<PostResponse>>builder()
                 .message("success")
                 .data(postService.getPostsByUserId(userId))
                 .build();
     }
     @GetMapping("/by-user-like")
-    DataResponse<List<PostResponse>> getPostsByUserId() {
-        return  DataResponse.<List<PostResponse>>builder()
+    DataResponse<LinkedHashSet<PostResponse>> getPostsByUserId() {
+        return  DataResponse.<LinkedHashSet<PostResponse>>builder()
                 .message("success")
                 .data(postService.getPostByCurrentUserLike())
                 .build();

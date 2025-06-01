@@ -12,5 +12,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<List<Post>> findByTagId(Long tagId);
     Optional<List<Post>> findByAuthorId(String authorId);
 
-    Optional<List<Post>> findByTagTagTypeAndStatus(TagType tagType, PostStatus status);
+    Optional<List<Post>> findByTagTagTypeAndStatusOrderByCreatedAtDesc(TagType tagType, PostStatus status);
 }
