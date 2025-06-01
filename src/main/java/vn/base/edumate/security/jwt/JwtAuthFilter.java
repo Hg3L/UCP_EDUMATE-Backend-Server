@@ -63,6 +63,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (StringUtils.isNotEmpty(uid) && SecurityContextHolder.getContext().getAuthentication() == null) {
             User userDetails = (User) customUserDetailsService.loadUserByUsername(uid);
 
+            Token accessToken = tokenService.getToken(token);
+            if (accessToken == null) {
+                log.info("Access token not found in database");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (accessToken.isRevoked() || accessToken.isExpired()) {
+                log.info("Access token is revoked or expired");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            log.info("Access token is valid");
+
             if (jwtService.validateToken(token, TokenType.ACCESS_TOKEN, userDetails)) {
 
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -74,11 +89,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setContext(context);
             }
             else {
-                Token accessToken = tokenService.getToken(token);
-                if (accessToken != null) {
-                    accessToken.setExpired(true);
-                    tokenService.saveToken(accessToken);
-                }
+                accessToken.setExpired(true);
+                tokenService.saveToken(accessToken);
             }
         }
 
