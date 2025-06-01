@@ -1,9 +1,11 @@
 package vn.base.edumate.post;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,8 +85,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPostsByTag(Long tagId) {
-        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+    public LinkedHashSet<PostResponse> getPostsByTag(Long tagId) {
+        AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
         postRepository
                 .findByTagId(tagId)
                 .filter(list -> !list.isEmpty())
@@ -96,7 +98,7 @@ public class PostServiceImpl implements PostService {
                                             post.getComments().size());
                                     return postResponse;
                                 })
-                                .toList()),
+                                .collect(Collectors.toCollection(LinkedHashSet::new))),
                         () -> {
                             throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);
                         });
@@ -104,28 +106,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPostByTagType(TagType tagType) {
+    public LinkedHashSet<PostResponse> getPostByTagType(TagType tagType) {
         User user = userService.getCurrentUser();
         List<Post> hiddenPosts = user.getHiddenPosts(); // lấy danh sách post bị ẩn
 
-        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+        AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
 
         postRepository
-                .findByTagTagTypeAndStatus(tagType, PostStatus.ACTIVE)
+                .findByTagTagTypeAndStatusOrderByCreatedAtDesc(tagType, PostStatus.ACTIVE)
                 .filter(list -> !list.isEmpty())
                 .ifPresentOrElse(
                         posts -> {
-                            List<PostResponse> visiblePosts = posts.stream()
+                            LinkedHashSet<PostResponse> visiblePosts = posts.stream()
                                     .filter(post -> !hiddenPosts.contains(post)) // lọc bài viết đã bị ẩn
                                     .map(post -> {
                                         PostResponse postResponse = postMapper.toResponse(post);
                                         postResponse.setCommentCount(post.getComments().stream()
                                                 .filter(comment -> comment.getParent() == null)
-                                                .toList()
+                                                .collect(Collectors.toCollection(LinkedHashSet::new))
                                                 .size());
                                         return postResponse;
                                     })
-                                    .toList();
+                                    .collect(Collectors.toCollection(LinkedHashSet::new));
                             postsResponse.set(visiblePosts);
                         },
                         () -> {
@@ -136,8 +138,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPostsByUserId(String userId) {
-        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+    public LinkedHashSet<PostResponse> getPostsByUserId(String userId) {
+        AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
         postRepository.findByAuthorId(userId).ifPresentOrElse(posts -> {
             postsResponse.set(posts.stream().map( post -> {
                 PostResponse postResponse = postMapper.toResponse(post);
@@ -147,15 +149,15 @@ public class PostServiceImpl implements PostService {
                         .size());
                 return postResponse;
             })
-                    .toList());
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
         return postsResponse.get();
     }
 
     @Override
-    public List<PostResponse> getPostByCurrentUserLike() {
+    public LinkedHashSet<PostResponse> getPostByCurrentUserLike() {
         User user = userService.getCurrentUser();
-        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+        AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
         Optional.ofNullable(user.getPostLikes()).ifPresentOrElse(posts -> {
             List<Post> postList = posts.stream().map(PostLike::getPost).toList();
              postsResponse.set(postList.stream().map(post -> {
@@ -165,7 +167,7 @@ public class PostServiceImpl implements PostService {
                          .toList()
                          .size());
                  return postResponse;
-             }).toList());
+             }).collect(Collectors.toCollection(LinkedHashSet::new)));
         },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
         return postsResponse.get();
     }

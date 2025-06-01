@@ -1,5 +1,6 @@
 package vn.base.edumate.common.config;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,7 +68,7 @@ public class DataInitializerConfig {
         return args -> {
             createRolesIfNotExist(roleRepository);
             createUserStatusIfNotExist(userStatusRepository);
-            createTagIfNotExist(tagRepository);
+            createTagsIfNotExist(tagRepository);
 
             if (userRepository.findByEmail(adminEmail).isEmpty()) {
 
@@ -125,14 +126,43 @@ public class DataInitializerConfig {
         }
     }
 
-    public void createTagIfNotExist(TagRepository tagRepository) {
+    public void createTagsIfNotExist(TagRepository tagRepository) {
         List<Tag> tags = tagRepository.findAll();
         if (tags.isEmpty()) {
-            Tag tag = Tag.builder()
-                    .tagType(TagType.SHARING_KNOWLEDGE)
-                    .name("Mẹo học tập")
-                    .build();
-            tagRepository.save(tag);
+            List<Tag> newTags = Arrays.asList(
+                    Tag.builder()
+                            .tagType(TagType.SHARING_KNOWLEDGE)
+                            .name("Mẹo học tập")
+                            .build(),
+                    Tag.builder()
+                            .tagType(TagType.SHARING_KNOWLEDGE)
+                            .name("Phương pháp ôn thi")
+                            .build(),
+                    Tag.builder()
+                            .tagType(TagType.SHARING_KNOWLEDGE)
+                            .name("Chia sẻ kinh nghiệm")
+                            .build(),
+                    Tag.builder()
+                            .tagType(TagType.HOMEWORK_SUPPORT)
+                            .name("Môn toán")
+                            .build(),
+                    Tag.builder()
+                            .tagType(TagType.HOMEWORK_SUPPORT)
+                            .name("Môn Văn")
+                            .build(),
+                    Tag.builder()
+                            .tagType(TagType.HOMEWORK_SUPPORT)
+                            .name("Môn Tiếng Anh")
+                            .build(),
+                    Tag.builder()
+                            .tagType(TagType.HOMEWORK_SUPPORT)
+                            .name("Khác")
+                            .build()
+
+
+            );
+            tagRepository.saveAll(newTags);
         }
     }
+
 }
