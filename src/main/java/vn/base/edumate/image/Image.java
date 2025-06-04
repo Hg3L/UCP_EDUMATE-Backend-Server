@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.comment.Comment;
 import vn.base.edumate.common.base.AbstractEntity;
+import vn.base.edumate.history.semantic.SemanticSearch;
 import vn.base.edumate.post.Post;
 
 @Entity
@@ -41,4 +42,15 @@ public class Image extends AbstractEntity {
 
     @OneToOne(mappedBy = "image")
     private Comment comment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "semantic_search_id")
+    SemanticSearch semanticSearch;
+
+
+    @Column(name = "text_extract", columnDefinition = "TEXT")
+    private String textExtract;
+
+    @Column(name = "label_extract", columnDefinition = "TEXT")
+    private String labelExtract;
 }

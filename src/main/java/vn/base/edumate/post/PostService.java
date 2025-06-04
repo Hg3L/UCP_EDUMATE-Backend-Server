@@ -20,8 +20,11 @@ public interface PostService {
 
     PostResponse getPostResponseById(Long id);
 
+    Long getPostIdByImageId(Long id);
 
     void deletePost(Long id);
 
     void hidePostForCurrentUser(Long postId);
+
+    List<Post> getPostsByIds(List<Long> postIds);
 }

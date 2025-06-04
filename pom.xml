@@ -35,7 +35,7 @@
         <cloudinary.version>1.39.0</cloudinary.version>
         <spotless.version>2.43.0</spotless.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <google-cloud-vision.version>3.58.0</google-cloud-vision.version>
+        <gcloud.vision.version>3.61.0</gcloud.vision.version>
     </properties>
     <dependencies>
         <dependency>
@@ -124,12 +124,6 @@
             <artifactId>lombok</artifactId>
             <scope>annotationProcessor</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-vision -->
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-vision</artifactId>
-            <version>${google-cloud-vision.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.google.genai</groupId>
             <artifactId>google-genai</artifactId>
@@ -137,9 +131,10 @@
         </dependency>
         <dependency>
             <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-vertexai</artifactId>
-            <version>1.20.1</version>
+            <artifactId>google-cloud-vision</artifactId>
+            <version>${gcloud.vision.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>

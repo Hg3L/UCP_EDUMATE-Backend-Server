@@ -1,23 +1,15 @@
 package vn.base.edumate.image;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.sql.rowset.serial.SerialBlob;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +22,20 @@ import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
 import vn.base.edumate.post.*;
+import vn.base.edumate.vision.ImageAnalyzeService;
+import vn.base.edumate.vision.TextNormalizer;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Slf4j
 public class ImageServiceImpl implements ImageService {
     ImageRepository imageRepository;
+    PostService postService;
     ImageMapper imageMapper;
-    Cloudinary cloudinary;
+    ImageAnalyzeService imageAnalyzeService;
+
 
     @Override
     public Image getImageById(Long id) {
@@ -54,6 +50,7 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.deleteById(image.getId());
     }
 
+    @Transactional
     @Override
     public List<ImageResponse> saveImage(List<MultipartFile> multipartFiles) throws SQLException, IOException {
         List<ImageResponse> imageResponses = new ArrayList<>();
@@ -66,11 +63,19 @@ public class ImageServiceImpl implements ImageService {
                         .fileType(file.getContentType())
                         .build();
                 imageRepository.save(image);
+                log.info("- Image saved: {}", image.getId());
                 String imageUrl = "/image/" + image.getId();
                 image.setImageUrl(imageUrl);
+
+                Map<String, String> analyzeResult = imageAnalyzeService.analyzeImage(file);
+                image.setLabelExtract(TextNormalizer.normalizeText(analyzeResult.get("labels")));
+                image.setTextExtract(TextNormalizer.normalizeText(analyzeResult.get("text")));
+
                 imageRepository.save(image);
+                log.info("Mapped Image: fileName={}, fileType={}, imageUrl={}", image.getFileName(), image.getFileType(), image.getImageUrl());
                 ImageResponse imageResponse = imageMapper.toImageResponse(image);
                 imageResponses.add(imageResponse);
+                log.info("- Image response: {}", imageResponse);
             }
         } catch (IOException e) {
             throw new IOException("Lỗi I/O: " + e.getMessage(), e);
@@ -110,43 +115,6 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String uploadImageCloudinary(MultipartFile file) throws IOException {
-        String publicValue = generatePublicValue(file.getOriginalFilename());
-        log.info("originalFileName is: {}", file.getOriginalFilename());
-        log.info("publicValue is: {}", publicValue);
-        String extension = getFileName(Objects.requireNonNull(file.getOriginalFilename()))[1];
-        log.info("extension is: {}", extension);
-        File fileUpload = convert(file);
-        log.info("fileUpload is: {}", fileUpload);
-        cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id", publicValue));
-        cleanDisk(fileUpload);
-        return  cloudinary.url()
-                .secure(true)
-                .generate(StringUtils.join(publicValue, ".", extension));
-    }
-    private File convert(MultipartFile file) throws IOException {
-        assert file.getOriginalFilename() != null;
-        File convFile = new File(StringUtils.join(generatePublicValue(file.getOriginalFilename()), getFileName(file.getOriginalFilename())[1]));
-        try(InputStream is = file.getInputStream()) {
-            Files.copy(is, convFile.toPath());
-        }
-        return convFile;
-    }
-    private void cleanDisk(File file) {
-        try {
-            log.info("file.toPath(): {}", file.toPath());
-            Path filePath = file.toPath();
-            Files.delete(filePath);
-        } catch (IOException e) {
-            log.error("Error");
-        }
-    }
-
-    public String generatePublicValue(String originalName){
-        String fileName = getFileName(originalName)[0];
-        return StringUtils.join(UUID.randomUUID().toString(), "_", fileName);
-    }
-
-    public String[] getFileName(String originalName) {
-        return originalName.split("\\.");
+        return "";
     }
 }

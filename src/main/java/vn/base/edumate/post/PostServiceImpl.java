@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,10 @@ import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.service.UserService;
 
+import static java.util.stream.Collectors.toList;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -48,19 +52,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse savePost(CreatePostRequest createPostRequest) {
+        log.info("createPostRequest: {}", createPostRequest);
         if (createPostRequest.getId() != null) {
             Post post = getPostById(createPostRequest.getId());
             postMapper.updatePost(post, createPostRequest);
             if (createPostRequest.getImageIds() != null) {
                 List<Long> imageIds = createPostRequest.getImageIds();
                 List<Image> images = imageRepository.findAllById(imageIds);
+                log.info("images: {}", images.stream().map(Image::getId).collect(toList()));
                 post.setImages(images);
             } else {
+                log.info("images: null");
                 post.setImages(null);
             }
             return postMapper.toResponse(postRepository.save(post));
         } else {
-
+            log.info("createPostRequest.getId() == null -> create post");
+            log.info("createPostRequest: {}", createPostRequest);
             Post post = postMapper.toModel(createPostRequest);
             User user = userService.getCurrentUser();
             Tag tag = tagRepository
@@ -69,6 +77,7 @@ public class PostServiceImpl implements PostService {
             if (createPostRequest.getImageIds() != null) {
                 List<Long> imageIds = createPostRequest.getImageIds();
                 List<Image> images = imageRepository.findAllById(imageIds);
+                log.info("images: {}", images.stream().map(Image::getId).collect(toList()));
                 post.setImages(images);
             }
             post.setLikeCount(0);
@@ -205,6 +214,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Long getPostIdByImageId(Long id) {
+        return postRepository.findByImages_Id(id)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED))
+                .getId();
+    }
+
+    @Override
     public void deletePost(Long id) {
         Post post = getPostById(id);
         postRepository.delete(post);
@@ -221,5 +237,19 @@ public class PostServiceImpl implements PostService {
             user.getHiddenPosts().add(post);
             userRepository.save(user);
         }
+    }
+
+    @Override
+    public List<Post> getPostsByIds(List<Long> postIds) {
+        List<Post> posts = new ArrayList<>();
+        log.info("postIds: {}", postIds);
+        if (postIds != null && !postIds.isEmpty()) {
+            log.info("postIds.size() > 0");
+            posts = postRepository.findAllById(postIds);
+        }
+        else {
+            log.info("ids size = 0, return empty list");
+        }
+        return posts;
     }
 }

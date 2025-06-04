@@ -22,19 +22,7 @@ import java.util.List;
 @Slf4j
 public class AISearchServiceImp implements AISearchService {
 
-    /**
-     * Choose the url based on the environment. If running on a local machine, choose the localUrl.
-     */
-    @Value("${system.glide-client.lan-address-wifi-1}")
-    private String lanUrl1;
-    @Value("${system.glide-client.lan-address-wifi-2}")
-    private String lanUrl2;
-    @Value("${system.glide-client.lan-address-iphone}")
-    private String lanUrlIphone;
-    @Value("${system.glide-client.local-address}")
-    private String localUrl;
-
-    private static final String DEFAULT_ENDPOINT_URL = "/history/ai-search/history-image/";
+    private static final String DEFAULT_ENDPOINT_URL = "/history/ai-search/image/";
 
     private final AISearchRepository aiSearchRepository;
     private final UserService userService;
@@ -69,7 +57,7 @@ public class AISearchServiceImp implements AISearchService {
         List<AISearchResponse> responses = new ArrayList<>();
         for (AISearch aiSearch : aiSearches) {
             AISearchResponse aiSearchResponse = mapper.toAISearchResponse(aiSearch);
-            aiSearchResponse.setImageUrl(lanUrl2 + DEFAULT_ENDPOINT_URL + aiSearch.getId());
+            aiSearchResponse.setImageUrl(DEFAULT_ENDPOINT_URL + aiSearch.getId());
             log.info("Link: {}", aiSearchResponse.getImageUrl());
             responses.add(aiSearchResponse);
         }

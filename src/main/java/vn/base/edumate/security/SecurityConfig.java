@@ -37,9 +37,8 @@ public class SecurityConfig {
 
     private static final List<String> WHITELIST = List.of("/v1/auth/**",
             "/**",
-            "/v1/gemini/**",
-            "/history/ai-search/history-image/**",
-            "/favicon.ico");
+            "/favicon.ico",
+            "/test/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {

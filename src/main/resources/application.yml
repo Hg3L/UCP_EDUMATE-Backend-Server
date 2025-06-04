@@ -15,11 +15,10 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     properties:
-
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+    show-sql: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
   thymeleaf:
     prefix: classpath:/templates/email/
     suffix: .html
@@ -27,14 +26,7 @@ spring:
     encoding: UTF-8
     cache: false
 
-
-
 system:
-  glide-client:
-    local-address: http://10.0.2.2:8080
-    lan-address-wifi-1: http://192.168.1.71:8080
-    lan-address-wifi-2: http://192.168.1.72:8080
-    lan-address-iphone: http://http://172.20.10.5:8080
   default:
     email:
       from: edumate.working@gmail.com
@@ -56,18 +48,15 @@ system:
       secretAccessKey: f6d0a6c1b856198768038df5da8cf5ba16176f1a34006cd4e88addaef0448b48
       secretRefreshKey: RdzQtkYMquhS24sAcwUJyPk9z7Q10o8IeCCTwbZFAS4=
   firebase:
-    config:
+    credential:
       path: firebase/firebase-admin-service-account.json
-
+  gcloud-vision:
+    credential:
+      path: gcloud/edumate-gcloud-vision-key.json
   cloudinary:
     cloud_name: dyawg2wm1
     api_key: 312721116553145
     api_secret: qMNWZd-5kKoa-tEZbrkH6HSYepY
-
-  gcloud-project:
-    id: edumate-458118
-    region: us-central1
-    model: gemini-2.0-flash
 
 
 

@@ -16,7 +16,7 @@ import com.google.firebase.FirebaseOptions;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${system.firebase.config.path}")
+    @Value("${system.firebase.credential.path}")
     private String firebaseConfigPath;
 
     @Bean
