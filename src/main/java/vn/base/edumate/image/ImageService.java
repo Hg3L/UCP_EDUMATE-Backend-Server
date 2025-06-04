@@ -17,4 +17,6 @@ public interface ImageService {
     List<ImageResponse> getImagesByPostId(Long postId);
 
     ByteArrayResource getImageResource(Image image) throws SQLException;
+
+    String uploadImageCloudinary(MultipartFile file) throws IOException;
 }

@@ -1,5 +1,6 @@
 package vn.base.edumate.user.service;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseToken;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
@@ -23,9 +25,11 @@ import vn.base.edumate.common.util.FirebaseProvider;
 import vn.base.edumate.common.util.RoleCode;
 import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.email.MailService;
+import vn.base.edumate.image.ImageService;
 import vn.base.edumate.role.Role;
 import vn.base.edumate.role.RoleService;
 import vn.base.edumate.user.dto.UserResponse;
+import vn.base.edumate.user.dto.request.UpdateUserRequest;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.entity.UserStatus;
 import vn.base.edumate.user.entity.UserStatusHistory;
@@ -45,6 +49,8 @@ public class UserServiceImpl implements UserService {
 
     private final RoleService roleService;
     private final UserMapper userMapper;
+    private final ImageService imageService;
+
 
     @Transactional
     @Override
@@ -148,5 +154,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(User user) {
         userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse updateUser(UpdateUserRequest updateUserRequest) throws IOException {
+        User user = getCurrentUser();
+        MultipartFile image = updateUserRequest.getFile();
+        if(image != null) {
+            String avatarUrl =  imageService.uploadImageCloudinary(image);
+            user.setAvatarUrl(avatarUrl);
+        }
+        userMapper.updateUser(user,updateUserRequest);
+        log.info("user",user);
+        UserResponse userResponse = userMapper.toUserResponse(userRepository.save(user));
+        return userResponse;
     }
 }

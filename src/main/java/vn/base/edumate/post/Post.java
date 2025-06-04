@@ -48,6 +48,7 @@ public class Post extends AbstractEntity {
     @JoinColumn(name = "user_id")
     private User author;
 
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private List<Image> images = new ArrayList<>();

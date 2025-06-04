@@ -79,11 +79,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponse> getCommentsByPostId(Long postId) {
         AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
+        User user = userService.getCurrentUser();
         commentRepository
                 .findByPostId(postId)
                 .ifPresentOrElse(
                         comments -> commentsResponse.set(
-                                comments.stream().map(commentMapper::toResponse).toList()),
+                                comments.stream().map(comment -> {
+                                    return commentMapper.toResponse(comment,user,commentLikeRepository);
+                                }).toList()),
                         () -> {
                             throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);
                         });
@@ -92,10 +95,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse getCommentById(Long commentId) {
+        User user = userService.getCurrentUser();
         Comment comment = commentRepository
                 .findById(commentId)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED));
-        return commentMapper.toResponse(comment);
+        return commentMapper.toResponse(comment,user,commentLikeRepository);
     }
 
     @Override
@@ -123,11 +127,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentResponse> getCommentsByParentCommentId(Long parentCommentId) {
         AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
+        User user = userService.getCurrentUser();
         commentRepository
                 .findByParentId(parentCommentId)
                 .ifPresentOrElse(
                         comments -> commentsResponse.set(
-                                comments.stream().map(commentMapper::toResponse).toList()),
+                                comments.stream().map(comment -> {
+                                    return commentMapper.toResponse(comment,user,commentLikeRepository);
+                                }).toList()),
                         () -> {
                             throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);
                         });

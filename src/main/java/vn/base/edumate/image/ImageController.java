@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import lombok.Data;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +31,13 @@ public class ImageController {
         return DataResponse.<List<ImageResponse>>builder()
                 .message("Thêm ảnh thành công!")
                 .data(imageResponses)
+                .build();
+    }
+    @PostMapping("/cloudinary")
+    public DataResponse<String> saveImageCloudinary(@RequestParam MultipartFile multipartFile) throws IOException {
+        return DataResponse.<String>builder()
+                .message("Thêm ảnh thành công")
+                .data(imageService.uploadImageCloudinary(multipartFile))
                 .build();
     }
 

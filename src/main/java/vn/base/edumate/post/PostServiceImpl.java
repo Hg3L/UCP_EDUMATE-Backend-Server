@@ -27,7 +27,6 @@ import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.service.UserService;
 
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -87,13 +86,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public LinkedHashSet<PostResponse> getPostsByTag(Long tagId) {
         AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
+        User user = userService.getCurrentUser();
         postRepository
                 .findByTagId(tagId)
                 .filter(list -> !list.isEmpty())
                 .ifPresentOrElse(
                         posts -> postsResponse.set(posts.stream()
                                 .map(post -> {
-                                    PostResponse postResponse = postMapper.toResponse(postRepository.save(post));
+                                    PostResponse postResponse =  postMapper.toResponse(post,user,postLikeRepository);
                                     postResponse.setCommentCount(
                                             post.getComments().size());
                                     return postResponse;
@@ -120,7 +120,7 @@ public class PostServiceImpl implements PostService {
                             LinkedHashSet<PostResponse> visiblePosts = posts.stream()
                                     .filter(post -> !hiddenPosts.contains(post)) // lọc bài viết đã bị ẩn
                                     .map(post -> {
-                                        PostResponse postResponse = postMapper.toResponse(post);
+                                        PostResponse postResponse =  postMapper.toResponse(post,user,postLikeRepository);
                                         postResponse.setCommentCount(post.getComments().stream()
                                                 .filter(comment -> comment.getParent() == null)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -140,9 +140,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public LinkedHashSet<PostResponse> getPostsByUserId(String userId) {
         AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
+        User user = userService.getUserById(userId);
         postRepository.findByAuthorId(userId).ifPresentOrElse(posts -> {
             postsResponse.set(posts.stream().map( post -> {
-                PostResponse postResponse = postMapper.toResponse(post);
+                PostResponse postResponse =  postMapper.toResponse(post,user,postLikeRepository);
                 postResponse.setCommentCount(post.getComments().stream()
                         .filter(comment -> comment.getParent() == null)
                         .toList()
@@ -161,7 +162,7 @@ public class PostServiceImpl implements PostService {
         Optional.ofNullable(user.getPostLikes()).ifPresentOrElse(posts -> {
             List<Post> postList = posts.stream().map(PostLike::getPost).toList();
              postsResponse.set(postList.stream().map(post -> {
-                 PostResponse postResponse = postMapper.toResponse(post);
+                 PostResponse postResponse = postMapper.toResponse(post,user,postLikeRepository);
                  postResponse.setCommentCount(post.getComments().stream()
                          .filter(comment -> comment.getParent() == null)
                          .toList()
@@ -195,9 +196,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse getPostResponseById(Long id) {
-        return postMapper.toResponse(postRepository
+        User user = userService.getCurrentUser();
+        Post post = postRepository
                 .findById(id)
-                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED)));
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED));
+
+        return postMapper.toResponse(post,user,postLikeRepository);
     }
 
     @Override

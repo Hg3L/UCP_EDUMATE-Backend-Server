@@ -24,4 +24,5 @@ public class PostResponse extends AbstractDTO {
     private Integer likeCount;
     private Integer commentCount;
     private List<ImageResponse> images;
+    private boolean liked;
 }

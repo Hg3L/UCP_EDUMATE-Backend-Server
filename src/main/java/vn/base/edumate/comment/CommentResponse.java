@@ -23,4 +23,5 @@ public class CommentResponse extends AbstractDTO {
     PostResponse post;
     CommentResponse parent;
     int repliesCount;
+    boolean liked;
 }
