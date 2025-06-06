@@ -43,11 +43,6 @@ public class Image extends AbstractEntity {
     @OneToOne(mappedBy = "image")
     private Comment comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "semantic_search_id")
-    SemanticSearch semanticSearch;
-
-
     @Column(name = "text_extract", columnDefinition = "TEXT")
     private String textExtract;
 
