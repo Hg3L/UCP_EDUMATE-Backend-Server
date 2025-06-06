@@ -21,9 +21,17 @@ public class AbstractDTO {
     String createdBy;
     String updatedBy;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/M/yyyy")
+    @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "dd/M/yyyy HH:mm:ss",
+            timezone = "Asia/Ho_Chi_Minh"
+    )
     Date createdAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/M/yyyy")
+    @JsonFormat(
+            shape = JsonFormat.Shape.STRING,
+            pattern = "dd/M/yyyy HH:mm:ss",
+            timezone = "Asia/Ho_Chi_Minh"
+    )
     Date updatedAt;
 }
