@@ -1,5 +1,6 @@
 package vn.base.edumate.post;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,14 +117,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public LinkedHashSet<PostResponse> getPostByTagType(TagType tagType) {
+    public LinkedHashSet<PostResponse> getPostByTagType(PageRequest pageRequest, TagType tagType) {
         User user = userService.getCurrentUser();
         List<Post> hiddenPosts = user.getHiddenPosts(); // lấy danh sách post bị ẩn
 
         AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
 
         postRepository
-                .findByTagTagTypeAndStatusOrderByCreatedAtDesc(tagType, PostStatus.ACTIVE)
+                .findByTagTagTypeAndStatusOrderByCreatedAtDesc( pageRequest,tagType, PostStatus.ACTIVE)
                 .filter(list -> !list.isEmpty())
                 .ifPresentOrElse(
                         posts -> {
@@ -251,5 +253,10 @@ public class PostServiceImpl implements PostService {
             log.info("ids size = 0, return empty list");
         }
         return posts;
+    }
+
+    @Override
+    public Integer getPostCountByTagType(TagType tagType) {
+        return postRepository.countByTagTagType(tagType);
     }
 }

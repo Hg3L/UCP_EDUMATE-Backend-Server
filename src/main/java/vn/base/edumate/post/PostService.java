@@ -3,6 +3,7 @@ package vn.base.edumate.post;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
 import vn.base.edumate.common.util.TagType;
 
 public interface PostService {
@@ -12,7 +13,7 @@ public interface PostService {
 
     LinkedHashSet<PostResponse> getPostsByTag(Long tagId);
 
-    LinkedHashSet<PostResponse> getPostByTagType(TagType tagType);
+    LinkedHashSet<PostResponse> getPostByTagType(PageRequest pageRequest, TagType tagType);
     LinkedHashSet<PostResponse> getPostsByUserId(String userId);
     LinkedHashSet<PostResponse> getPostByCurrentUserLike();
 
@@ -27,4 +28,5 @@ public interface PostService {
     void hidePostForCurrentUser(Long postId);
 
     List<Post> getPostsByIds(List<Long> postIds);
+    Integer getPostCountByTagType(TagType tagType);
 }

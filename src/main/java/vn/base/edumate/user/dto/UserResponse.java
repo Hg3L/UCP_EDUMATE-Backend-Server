@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import vn.base.edumate.common.util.AuthMethod;
 import vn.base.edumate.common.util.UserStatusCode;
 
 
@@ -30,6 +31,7 @@ public class UserResponse {
     UserStatusCode status;
 
     String introduction;
+    AuthMethod authMethod;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/M/yyyy HH:mm:ss")
     private LocalDateTime expiredAt;
