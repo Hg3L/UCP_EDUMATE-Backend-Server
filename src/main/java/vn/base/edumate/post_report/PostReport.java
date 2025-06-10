@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import vn.base.edumate.common.base.AbstractEntity;
 import vn.base.edumate.post.Post;
 import vn.base.edumate.user.entity.User;
@@ -22,6 +24,8 @@ public class PostReport extends AbstractEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     @Column(nullable = false)
