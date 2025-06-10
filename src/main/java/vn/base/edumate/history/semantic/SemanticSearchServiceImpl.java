@@ -30,7 +30,7 @@ public class SemanticSearchServiceImpl implements SemanticSearchService {
 
     @Override
     public void addNewSemanticSearchHistory(SemanticSearchRequest request) {
-        log.info("Adding new semantic search history for user: {}", request.getUid());
+        log.info("Adding new semantic search history: {}", request);
 
         try {
             SemanticSearch semanticSearch = SemanticSearch.builder()
@@ -38,18 +38,11 @@ public class SemanticSearchServiceImpl implements SemanticSearchService {
                     .imageBytes(new SerialBlob(request.getImage().getBytes()))
                     .build();
 
-            if (request.getImgIds().isEmpty()) {
-                log.warn("No post IDs found in the request");
-                return;
-            }
-
-            List<Image> similarImages = imageRepository.findAllById(request.getImgIds());
-            semanticSearch.setSimilarImages(similarImages);
             semanticSearchRepository.save(semanticSearch);
             log.info("Semantic search history created successfully");
 
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -66,7 +59,6 @@ public class SemanticSearchServiceImpl implements SemanticSearchService {
         for (SemanticSearch semanticSearch : semanticSearches) {
             SemanticSearchResponse response = semanticSearchMapper.toSemanticSearchResponse(semanticSearch);
             response.setImageUrl(DEFAULT_ENDPOINT_URL + semanticSearch.getId());
-            response.setSimilarImageId(semanticSearch.getSimilarImages().isEmpty() ? null : semanticSearch.getSimilarImages().getFirst().getId());
             responses.add(response);
         }
 

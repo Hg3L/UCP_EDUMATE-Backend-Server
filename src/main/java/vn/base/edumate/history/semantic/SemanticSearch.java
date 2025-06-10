@@ -32,10 +32,6 @@ public class SemanticSearch extends AbstractEntity {
     @Column
     Blob imageBytes;
 
-    @OneToMany(mappedBy = "semanticSearch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<Image> similarImages = new ArrayList<>();
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     User user;
 }

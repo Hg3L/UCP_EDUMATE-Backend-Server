@@ -16,5 +16,4 @@ public class SemanticSearchResponse extends AbstractDTO {
 
     private String imageUrl;
 
-    private Long similarImageId;
 }
