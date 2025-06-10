@@ -1,9 +1,11 @@
 package vn.base.edumate.post;
 
+import java.awt.print.Pageable;
 import java.util.LinkedHashSet;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.DataResponse;
+import vn.base.edumate.common.base.PagedResponse;
 import vn.base.edumate.common.util.TagType;
 
 @Slf4j
@@ -41,11 +44,22 @@ public class PostController {
 
     @GetMapping("/tag/type/{type}")
     @PreAuthorize("hasRole('USER')")
-    DataResponse<LinkedHashSet<PostResponse>> getPostsByTagType(@PathVariable("type") TagType type) {
-        LinkedHashSet<PostResponse> linkedHashSetDataResponse = postService.getPostByTagType(type);
-        return DataResponse.<LinkedHashSet<PostResponse>>builder()
+    DataResponse<PagedResponse<PostResponse>> getPostsByTagType(@RequestParam int page,
+                                                                @RequestParam int limit,
+                                                                @PathVariable("type") TagType type) {
+        PageRequest pageRequest = PageRequest.of(page-1,limit);
+        Integer totalItem = postService.getPostCountByTagType(type);
+        int totalPage = (int) Math.ceil((double)  totalItem/ limit);
+        LinkedHashSet<PostResponse> linkedHashSetDataResponse = postService.getPostByTagType(pageRequest,type);
+        return DataResponse.<PagedResponse<PostResponse>>builder()
                 .message("Tìm thấy bài viết")
-                .data(linkedHashSetDataResponse)
+                .data(PagedResponse .<PostResponse>builder()
+                                .content(linkedHashSetDataResponse)
+                        .limit(limit)
+                        .currentPage(page)
+                        .totalPages(totalPage)
+                        .totalElements(totalItem)
+                        .build())
                 .build();
     }
     @GetMapping("/by-user/{userId}")

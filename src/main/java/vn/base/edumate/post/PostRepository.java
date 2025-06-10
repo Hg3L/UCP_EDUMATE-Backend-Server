@@ -3,6 +3,7 @@ package vn.base.edumate.post;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<List<Post>> findByTagId(Long tagId);
     Optional<List<Post>> findByAuthorId(String authorId);
 
-    Optional<List<Post>> findByTagTagTypeAndStatusOrderByCreatedAtDesc(TagType tagType, PostStatus status);
+    Optional<List<Post>> findByTagTagTypeAndStatusOrderByCreatedAtDesc(Pageable pageable, TagType tagType, PostStatus status);
 
     Optional<Post> findByImages_Id(Long imagesId);
+    Integer countByTagTagType(TagType tagType);
 }
