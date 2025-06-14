@@ -29,4 +29,5 @@ public interface PostService {
 
     List<Post> getPostsByIds(List<Long> postIds);
     Integer getPostCountByTagType(TagType tagType);
+    List<PostResponse> getAll();
 }

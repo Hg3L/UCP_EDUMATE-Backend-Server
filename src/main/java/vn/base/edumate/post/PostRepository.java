@@ -19,4 +19,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByImages_Id(Long imagesId);
     Integer countByTagTagType(TagType tagType);
+    Optional<List<Post>> findAllByActive(Boolean active);
 }

@@ -35,6 +35,8 @@ public class Post extends AbstractEntity {
 
     @Column(name = "likeCount", nullable = false)
     private Integer likeCount = 0;
+    @Column(name =  "active")
+    private Boolean active = true;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

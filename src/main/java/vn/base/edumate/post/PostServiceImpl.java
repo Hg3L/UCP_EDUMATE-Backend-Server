@@ -259,4 +259,14 @@ public class PostServiceImpl implements PostService {
     public Integer getPostCountByTagType(TagType tagType) {
         return postRepository.countByTagTagType(tagType);
     }
+
+    @Override
+    public List<PostResponse> getAll() {
+        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+         postRepository.findAllByActive(true).ifPresentOrElse(posts -> {
+            List<PostResponse> postResponses = new ArrayList<>();
+            postsResponse.set(posts.stream().map(postMapper::toResponse).toList());
+        },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
+         return postsResponse.get();
+    }
 }

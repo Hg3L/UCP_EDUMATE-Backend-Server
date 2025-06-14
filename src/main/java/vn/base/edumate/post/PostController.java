@@ -4,6 +4,7 @@ import java.awt.print.Pageable;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +32,12 @@ public class PostController {
         return DataResponse.<PostResponse>builder()
                 .message("Thêm bài viết thành công!")
                 .data(postService.savePost(request))
+                .build();
+    }
+    @GetMapping
+    DataResponse<List<PostResponse>> getAll(){
+        return DataResponse.<List<PostResponse>>builder()
+                .data(postService.getAll())
                 .build();
     }
 
