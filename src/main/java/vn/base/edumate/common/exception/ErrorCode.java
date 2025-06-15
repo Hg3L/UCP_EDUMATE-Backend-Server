@@ -38,7 +38,6 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1009, HttpStatus.NOT_FOUND.value(), "Người dùng không tồn tại"),
     USER_STATUS_NOT_EXISTED(1010, HttpStatus.NOT_FOUND.value(), "Trạng thái người dùng không tồn tại"),
     USER_LOCKED(1011, HttpStatus.FORBIDDEN.value(), "Tài khoản đã bị khóa"),
-
     /**
      * RoleCode error codes
      */

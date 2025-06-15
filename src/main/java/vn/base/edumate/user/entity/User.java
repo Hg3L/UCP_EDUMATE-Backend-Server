@@ -60,8 +60,10 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
 
     @Column(name = "expired_at")
     private LocalDateTime expiredAt;
+
     @Column(name ="introduction")
     private String introduction;
+
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

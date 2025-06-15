@@ -5,8 +5,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import jakarta.mail.MessagingException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +34,7 @@ import vn.base.edumate.email.MailService;
 import vn.base.edumate.image.ImageService;
 import vn.base.edumate.role.Role;
 import vn.base.edumate.role.RoleService;
+import vn.base.edumate.user.UserSpecification;
 import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.dto.request.UpdateUserRequest;
 import vn.base.edumate.user.entity.User;
@@ -51,6 +58,45 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final ImageService imageService;
 
+
+    @Override
+    public Page<UserResponse> getUsers(
+            int page,
+            int size,
+            @Nullable AuthMethod authMethod,
+            @Nullable UserStatusCode userStatusCode,
+            @Nullable String keyword) {
+
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+
+        Specification<User> specification = Specification
+                .where(UserSpecification.hasRole(RoleCode.USER))
+                .and(UserSpecification.hasUserStatusNot(UserStatusCode.DELETED));
+
+        if (authMethod != null) {
+            specification = specification.and(UserSpecification.hasAuthMethod(authMethod));
+        }
+
+        if (userStatusCode != null) {
+            specification = specification.and(UserSpecification.hasUserStatus(userStatusCode));
+        }
+
+        if (keyword != null && !keyword.isBlank()) {
+            specification = specification.and(UserSpecification.matchesKeyword(keyword));
+        }
+
+        Page<User> userPage = userRepository.findAll(specification, pageable);
+
+        if(!userPage.hasContent()) {
+            log.warn("No users found with the given criteria: page={}, size={}, authMethod={}, userStatusCode={}",
+                    page, size, authMethod, userStatusCode);
+            return Page.empty(pageable);
+        }
+
+        return userPage.map(userMapper::toUserResponse);
+    }
 
     @Transactional
     @Override
@@ -139,6 +185,8 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.USER_NOT_EXISTED));
 
+        log.info("Current user: {}", user);
+
         return userMapper.toUserResponse(user);
     }
 
@@ -160,12 +208,12 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(UpdateUserRequest updateUserRequest) throws IOException {
         User user = getCurrentUser();
         MultipartFile image = updateUserRequest.getFile();
-        if(image != null) {
-            String avatarUrl =  imageService.uploadImageCloudinary(image);
+        if (image != null) {
+            String avatarUrl = imageService.uploadImageCloudinary(image);
             user.setAvatarUrl(avatarUrl);
         }
-        userMapper.updateUser(user,updateUserRequest);
-        log.info("user",user);
+        userMapper.updateUser(user, updateUserRequest);
+        log.info("user", user);
         UserResponse userResponse = userMapper.toUserResponse(userRepository.save(user));
         return userResponse;
     }
