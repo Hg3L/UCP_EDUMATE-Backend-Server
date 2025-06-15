@@ -22,6 +22,7 @@ import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.common.util.TagType;
 import vn.base.edumate.image.Image;
 import vn.base.edumate.image.ImageRepository;
+import vn.base.edumate.post_report.PostReportRepository;
 import vn.base.edumate.postlike.PostLike;
 import vn.base.edumate.postlike.PostLikeRepository;
 import vn.base.edumate.tag.Tag;
@@ -46,6 +47,7 @@ public class PostServiceImpl implements PostService {
     UserService userService;
     TagRepository tagRepository;
     PostLikeRepository postLikeRepository;
+    PostReportRepository postReportRepository;
 
     @Override
     public Post getPostById(Long id) {
@@ -277,6 +279,8 @@ public class PostServiceImpl implements PostService {
                         .filter(comment -> comment.getParent() == null)
                         .toList()
                         .size());
+                postResponse.setReportCount(postReportRepository.countByPost(post));
+
                 return postResponse;
             }).toList());
         },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
