@@ -2,6 +2,7 @@ package vn.base.edumate.security;
 
 import java.util.List;
 
+import lombok.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import vn.base.edumate.security.jwt.JwtAuthFilter;
 
 @Configuration
@@ -81,5 +84,20 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
+                registry.addMapping("**")
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedHeaders("*")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowCredentials(false)
+                        .maxAge(3600);
+            }
+        };
     }
 }
