@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
             if (createPostRequest.getImageIds() != null) {
                 List<Long> imageIds = createPostRequest.getImageIds();
                 List<Image> images = imageRepository.findAllById(imageIds);
-                log.info("images: {}", images.stream().map(Image::getId).collect(toList()));
+                log.info("images: {}", images.stream().map(Image::getId).toList());
                 post.setImages(images);
             }
             post.setLikeCount(0);
@@ -99,7 +99,7 @@ public class PostServiceImpl implements PostService {
         AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
         User user = userService.getCurrentUser();
         postRepository
-                .findByTagId(tagId)
+                .findByTagIdAndStatus(tagId,PostStatus.ACTIVE)
                 .filter(list -> !list.isEmpty())
                 .ifPresentOrElse(
                         posts -> postsResponse.set(posts.stream()
@@ -152,7 +152,7 @@ public class PostServiceImpl implements PostService {
     public LinkedHashSet<PostResponse> getPostsByUserId(String userId) {
         AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
         User user = userService.getUserById(userId);
-        postRepository.findByAuthorId(userId).ifPresentOrElse(posts -> {
+        postRepository.findByAuthorIdAndStatus(userId,PostStatus.ACTIVE).ifPresentOrElse(posts -> {
             postsResponse.set(posts.stream().map( post -> {
                 PostResponse postResponse =  postMapper.toResponse(post,user,postLikeRepository);
                 postResponse.setCommentCount(post.getComments().stream()
@@ -171,8 +171,12 @@ public class PostServiceImpl implements PostService {
         User user = userService.getCurrentUser();
         AtomicReference<LinkedHashSet<PostResponse>> postsResponse = new AtomicReference<>(new LinkedHashSet<>());
         Optional.ofNullable(user.getPostLikes()).ifPresentOrElse(posts -> {
-            List<Post> postList = posts.stream().map(PostLike::getPost).toList();
-             postsResponse.set(postList.stream().map(post -> {
+            List<Post> postList = posts.stream()
+                    .map(PostLike::getPost)
+                    .filter(post -> post.getStatus() == PostStatus.ACTIVE)
+                    .toList();
+
+            postsResponse.set(postList.stream().map(post -> {
                  PostResponse postResponse = postMapper.toResponse(post,user,postLikeRepository);
                  postResponse.setCommentCount(post.getComments().stream()
                          .filter(comment -> comment.getParent() == null)
@@ -225,7 +229,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(Long id) {
         Post post = getPostById(id);
-        postRepository.delete(post);
+        post.setStatus(PostStatus.DELETED);
+        post.getComments().clear();
+        postRepository.save(post);
     }
 
     @Override
@@ -257,6 +263,16 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Integer getPostCountByTagType(TagType tagType) {
-        return postRepository.countByTagTagType(tagType);
+        return postRepository.countByTagTagTypeAndStatus(tagType,PostStatus.ACTIVE);
+    }
+
+    @Override
+    public List<PostResponse> getAll() {
+        AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
+         postRepository.findAllByStatus(PostStatus.ACTIVE).ifPresentOrElse(posts -> {
+            List<PostResponse> postResponses = new ArrayList<>();
+            postsResponse.set(posts.stream().map(postMapper::toResponse).toList());
+        },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
+         return postsResponse.get();
     }
 }

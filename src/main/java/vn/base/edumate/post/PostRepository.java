@@ -12,11 +12,12 @@ import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.common.util.TagType;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    Optional<List<Post>> findByTagId(Long tagId);
-    Optional<List<Post>> findByAuthorId(String authorId);
+    Optional<List<Post>> findByTagIdAndStatus(Long tagId,PostStatus status);
+    Optional<List<Post>> findByAuthorIdAndStatus(String authorId,PostStatus status);
 
     Optional<List<Post>> findByTagTagTypeAndStatusOrderByCreatedAtDesc(Pageable pageable, TagType tagType, PostStatus status);
 
     Optional<Post> findByImages_Id(Long imagesId);
-    Integer countByTagTagType(TagType tagType);
+    Integer countByTagTagTypeAndStatus(TagType tagType, PostStatus status);
+    Optional<List<Post>> findAllByStatus(PostStatus status);
 }

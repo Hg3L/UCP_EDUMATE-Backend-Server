@@ -4,6 +4,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.postlike.PostLikeRepository;
 import vn.base.edumate.user.entity.User;
 
@@ -20,6 +21,11 @@ public interface PostMapper {
                           Post post,
                           @Context User user,
                           @Context PostLikeRepository postLikeRepository) {
-        response.setLiked(postLikeRepository.existsByUserAndPost(user, post));
+        if (post.getStatus() == PostStatus.ACTIVE) {
+            response.setLiked(postLikeRepository.existsByUserAndPost(user, post));
+        } else {
+            response.setLiked(false);
+        }
+
     }
 }

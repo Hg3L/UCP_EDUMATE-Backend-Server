@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 import vn.base.edumate.common.base.AbstractDTO;
+import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.image.ImageResponse;
 import vn.base.edumate.tag.TagResponse;
 import vn.base.edumate.user.dto.UserResponse;
@@ -23,6 +24,8 @@ public class PostResponse extends AbstractDTO {
     private TagResponse tag;
     private Integer likeCount;
     private Integer commentCount;
+    private PostStatus status;
     private List<ImageResponse> images;
     private boolean liked;
+    private boolean active;
 }
