@@ -16,7 +16,7 @@ import vn.base.edumate.user.dto.UserResponse;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class PostResponse extends AbstractDTO {
     private String content;
     private String title;

@@ -271,7 +271,14 @@ public class PostServiceImpl implements PostService {
         AtomicReference<List<PostResponse>> postsResponse = new AtomicReference<>(new ArrayList<>());
          postRepository.findAllByStatus(PostStatus.ACTIVE).ifPresentOrElse(posts -> {
             List<PostResponse> postResponses = new ArrayList<>();
-            postsResponse.set(posts.stream().map(postMapper::toResponse).toList());
+            postsResponse.set(posts.stream().map(post ->{
+                PostResponse postResponse = postMapper.toResponse(post);
+                postResponse.setCommentCount(post.getComments().stream()
+                        .filter(comment -> comment.getParent() == null)
+                        .toList()
+                        .size());
+                return postResponse;
+            }).toList());
         },() -> {throw new BaseApplicationException(ErrorCode.POST_NOT_EXISTED);});
          return postsResponse.get();
     }
