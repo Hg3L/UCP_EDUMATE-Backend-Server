@@ -77,4 +77,11 @@ public class CommentController {
                 .message("success")
                 .build();
     }
+    @GetMapping
+    public DataResponse<List<CommentResponse>> getAll(){
+        return DataResponse.<List<CommentResponse>>builder()
+                .data(commentService.getAll())
+                .message("success")
+                .build();
+    }
 }
