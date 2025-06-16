@@ -31,6 +31,6 @@ public class AISearch extends AbstractEntity {
     @Column(columnDefinition = "TEXT")
     String answer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     User user;
 }

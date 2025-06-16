@@ -36,4 +36,16 @@ public class AISearchController {
                 .cacheControl(CacheControl.maxAge(7, TimeUnit.DAYS))
                 .body(aiSearchService.getImageById(id));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteHistory(@PathVariable Long id) {
+        aiSearchService.deleteHistoryById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllHistories() {
+        aiSearchService.deleteAllHistoriesByUser();
+        return ResponseEntity.noContent().build();
+    }
 }

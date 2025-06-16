@@ -42,10 +42,4 @@ public class Image extends AbstractEntity {
 
     @OneToOne(mappedBy = "image")
     private Comment comment;
-
-    @Column(name = "text_extract", columnDefinition = "TEXT")
-    private String textExtract;
-
-    @Column(name = "label_extract", columnDefinition = "TEXT")
-    private String labelExtract;
 }

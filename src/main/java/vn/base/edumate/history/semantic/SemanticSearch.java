@@ -32,6 +32,6 @@ public class SemanticSearch extends AbstractEntity {
     @Column
     Blob imageBytes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     User user;
 }

@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AccessLevel;
@@ -27,9 +28,7 @@ import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
 import vn.base.edumate.post.*;
-import vn.base.edumate.vision.ImageAnalyzeService;
-import vn.base.edumate.vision.ImageAnalyzeServiceImpl;
-import vn.base.edumate.vision.TextNormalizer;
+import vn.base.edumate.vision.*;
 
 @Slf4j
 @Service
@@ -41,7 +40,10 @@ public class ImageServiceImpl implements ImageService {
     ImageRepository imageRepository;
     ImageMapper imageMapper;
     Cloudinary cloudinary;
-    private final ImageAnalyzeService imageAnalyzeService;
+    ImageAnalyzeService imageAnalyzeService;
+
+    RestClient restClient;
+
 
     @Override
     public Image getImageById(Long id) {
@@ -60,7 +62,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<ImageResponse> saveImage(List<MultipartFile> multipartFiles) throws SQLException, IOException {
         List<ImageResponse> imageResponses = new ArrayList<>();
-
+        List<ImageAnalyze> imageAnalyzes = new ArrayList<>();
         try {
             for (MultipartFile file : multipartFiles) {
                 Image image = Image.builder()
@@ -72,17 +74,29 @@ public class ImageServiceImpl implements ImageService {
                 log.info("- Image saved: {}", image.getId());
                 String imageUrl = "/image/" + image.getId();
                 image.setImageUrl(imageUrl);
-
-                Map<String, String> analyzeResult = imageAnalyzeService.analyzeImage(file);
-                image.setLabelExtract(TextNormalizer.normalizeText(analyzeResult.get("labels")));
-                image.setTextExtract(TextNormalizer.normalizeText(analyzeResult.get("text")));
-
                 imageRepository.save(image);
+
+                String analyzeResult = imageAnalyzeService.analyzeImage(file);
+                imageAnalyzes.add(ImageAnalyze.builder()
+                        .id(image.getId())
+                        .content(analyzeResult)
+                        .imageUrl(imageUrl)
+                        .build());
+
                 log.info("Mapped Image: fileName={}, fileType={}, imageUrl={}", image.getFileName(), image.getFileType(), image.getImageUrl());
                 ImageResponse imageResponse = imageMapper.toImageResponse(image);
                 imageResponses.add(imageResponse);
                 log.info("- Image response: {}", imageResponse);
             }
+
+            if (!imageAnalyzes.isEmpty()) {
+                restClient.post()
+                        .uri("http://localhost:8888/api/images/batch")
+                        .body(ImageAnalyzeBatch.builder().images(imageAnalyzes).build())
+                        .retrieve()
+                        .body(Map.class);
+            }
+
         } catch (IOException e) {
             throw new IOException("Lỗi I/O: " + e.getMessage(), e);
         } catch (SQLException e) {
@@ -130,18 +144,20 @@ public class ImageServiceImpl implements ImageService {
         log.info("fileUpload is: {}", fileUpload);
         cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id", publicValue));
         cleanDisk(fileUpload);
-        return  cloudinary.url()
+        return cloudinary.url()
                 .secure(true)
                 .generate(StringUtils.join(publicValue, ".", extension));
     }
+
     private File convert(MultipartFile file) throws IOException {
         assert file.getOriginalFilename() != null;
         File convFile = new File(StringUtils.join(generatePublicValue(file.getOriginalFilename()), getFileName(file.getOriginalFilename())[1]));
-        try(InputStream is = file.getInputStream()) {
+        try (InputStream is = file.getInputStream()) {
             Files.copy(is, convFile.toPath());
         }
         return convFile;
     }
+
     private void cleanDisk(File file) {
         try {
             log.info("file.toPath(): {}", file.toPath());
@@ -152,7 +168,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    public String generatePublicValue(String originalName){
+    public String generatePublicValue(String originalName) {
         String fileName = getFileName(originalName)[0];
         return StringUtils.join(UUID.randomUUID().toString(), "_", fileName);
     }

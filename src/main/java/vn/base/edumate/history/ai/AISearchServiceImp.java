@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.ResourceNotFoundException;
+import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.service.UserService;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -77,6 +78,21 @@ public class AISearchServiceImp implements AISearchService {
         } catch (SQLException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Transactional
+    @Override
+    public void deleteHistoryById(Long id) {
+        aiSearchRepository.deleteById(id);
+        log.info("Deleted AI search history with ID: {}", id);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllHistoriesByUser() {
+        User user = userService.getCurrentUser();
+        aiSearchRepository.deleteAllByUser(user);
+        log.info("Deleted all AI search histories for user with ID: {}", user.getId());
     }
 
 }

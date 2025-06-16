@@ -12,4 +12,6 @@ public interface SemanticSearchRepository extends JpaRepository<SemanticSearch, 
 
     @Query("SELECT s FROM SemanticSearch s WHERE s.user = :user ORDER BY s.createdAt DESC")
     List<SemanticSearch> findBySemanticSearchByUser(User user);
+
+    void deleteAllByUser(User user);
 }

@@ -28,6 +28,7 @@ public class SemanticSearchServiceImpl implements SemanticSearchService {
     private final SemanticSearchMapper semanticSearchMapper;
     private final ImageRepository imageRepository;
 
+    @Transactional
     @Override
     public void addNewSemanticSearchHistory(SemanticSearchRequest request) {
         log.info("Adding new semantic search history: {}", request);
@@ -79,5 +80,20 @@ public class SemanticSearchServiceImpl implements SemanticSearchService {
         } catch (SQLException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Transactional
+    @Override
+    public void deleteHistoryById(Long id) {
+        semanticSearchRepository.deleteById(id);
+        log.info("Deleted semantic search history with ID: {}", id);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAllHistoriesByUser() {
+        var user = userService.getCurrentUser();
+        semanticSearchRepository.deleteAllByUser(user);
+        log.info("Deleted all semantic search histories for user: {}", user.getId());
     }
 }

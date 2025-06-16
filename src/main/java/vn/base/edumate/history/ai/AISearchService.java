@@ -9,4 +9,8 @@ public interface AISearchService {
     List<AISearchResponse> getHistoriesByUser();
 
     byte[] getImageById(Long id);
+
+    void deleteHistoryById(Long id);
+
+    void deleteAllHistoriesByUser();
 }

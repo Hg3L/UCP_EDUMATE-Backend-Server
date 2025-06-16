@@ -19,7 +19,7 @@ public class ImageAnalyzeServiceImpl implements ImageAnalyzeService {
     private final ImageAnnotatorClient imageAnnotatorClient;
 
     @Override
-    public Map<String, String> analyzeImage(MultipartFile file) {
+    public String analyzeImage(MultipartFile file) {
 
         try {
             ByteString imgBytes = ByteString.readFrom(file.getInputStream());
@@ -28,31 +28,34 @@ public class ImageAnalyzeServiceImpl implements ImageAnalyzeService {
             Feature textFeature = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
             Feature labelFeature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
             AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
-                .addFeatures(textFeature)
-                .addFeatures(labelFeature)
-                .setImage(img)
-                .build();
+                    .addFeatures(textFeature)
+                    .addFeatures(labelFeature)
+                    .setImage(img)
+                    .build();
 
             AnnotateImageResponse response = imageAnnotatorClient.batchAnnotateImages(List.of(request))
-                .getResponses(0);
+                    .getResponses(0);
 
             if (response.hasError()) {
                 log.error("Vision API error: {}", response.getError().getMessage());
                 throw new RuntimeException("Vision API error: " + response.getError().getMessage());
             }
 
-            Map<String, String> result = Map.of(
-                "labels", TextNormalizer.normalizeForSbert(getLabels(response)),
-                "text", TextNormalizer.normalizeForSbert(getText(response))
-            );
-            log.info("Image analyze result: {}", result);
-            return result;
+            if (!getText(response).isEmpty()) {
+                return getText(response);
+            }
+
+            if (getText(response).isEmpty()
+                    && !getLabels(response).isEmpty()) {
+                return getLabels(response);
+            }
+
 
         } catch (Exception e) {
             log.error("Error analyzing image: {}", e.getMessage());
         }
 
-        return Map.of("labels", "", "text", "");
+        return "";
     }
 
     private String getLabels(AnnotateImageResponse response) {

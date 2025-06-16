@@ -9,4 +9,8 @@ public interface SemanticSearchService {
     List<SemanticSearchResponse> getHistoriesByUser();
 
     byte[] getImageById(Long id);
+
+    void deleteHistoryById(Long id);
+
+    void deleteAllHistoriesByUser();
 }

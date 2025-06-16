@@ -35,4 +35,16 @@ public class SemanticSearchController {
                 .body(semanticSearchService.getImageById(id));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteHistory(@PathVariable Long id) {
+        semanticSearchService.deleteHistoryById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllHistories() {
+        semanticSearchService.deleteAllHistoriesByUser();
+        return ResponseEntity.noContent().build();
+    }
+
 }
