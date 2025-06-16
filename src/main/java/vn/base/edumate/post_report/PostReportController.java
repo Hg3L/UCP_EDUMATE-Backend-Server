@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import vn.base.edumate.common.base.DataResponse;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("report")
 @RequiredArgsConstructor
@@ -21,6 +23,13 @@ public class PostReportController {
         postReportService.reportPost(postId, reason);
         return DataResponse.<Void>builder()
                 .message("Tố cáo bài viết thành công")
+                .build();
+    }
+    @GetMapping
+    public DataResponse<List<PostReportResponse>> getAll(){
+        return DataResponse.<List<PostReportResponse>>builder()
+                .message("success")
+                .data(postReportService.getAll())
                 .build();
     }
 }

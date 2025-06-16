@@ -23,6 +23,8 @@ import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.service.UserService;
 
+import javax.swing.text.html.Option;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -148,6 +150,19 @@ public class CommentServiceImpl implements CommentService {
         AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
         commentRepository
                 .findByUserId(userId)
+                .ifPresentOrElse(
+                        comments -> commentsResponse.set(
+                                comments.stream().map(commentMapper::toResponse).toList()),
+                        () -> {
+                            throw new BaseApplicationException(ErrorCode.COMMENT_NOT_EXISTED);
+                        });
+        return commentsResponse.get();
+    }
+
+    @Override
+    public List<CommentResponse> getAll() {
+        AtomicReference<List<CommentResponse>> commentsResponse = new AtomicReference<>(new ArrayList<>());
+        Optional.of(commentRepository.findAll())
                 .ifPresentOrElse(
                         comments -> commentsResponse.set(
                                 comments.stream().map(commentMapper::toResponse).toList()),

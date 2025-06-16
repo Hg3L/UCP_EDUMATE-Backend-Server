@@ -12,6 +12,9 @@ import vn.base.edumate.post.PostRepository;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.service.UserService;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -19,6 +22,7 @@ public class PostReportServiceImpl implements PostReportService {
     UserService userService;
     PostRepository postRepository;
     PostReportRepository reportRepository;
+    PostReportMapper postReportMapper;
 
     @Override
     public void reportPost(Long postId, ReportRequest reason) {
@@ -36,5 +40,12 @@ public class PostReportServiceImpl implements PostReportService {
         report.setPost(post);
         report.setReason(reason.getReason());
         reportRepository.save(report);
+    }
+
+    @Override
+    public List<PostReportResponse> getAll() {
+        return reportRepository.findAll().stream().map(
+                 postReportMapper::toPostReportResponse
+         ).toList();
     }
 }
