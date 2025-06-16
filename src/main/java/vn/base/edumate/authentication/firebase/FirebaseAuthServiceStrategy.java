@@ -16,10 +16,7 @@ import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import vn.base.edumate.authentication.strategy.AuthServiceStrategy;
-import vn.base.edumate.common.exception.AccountLockedException;
-import vn.base.edumate.common.exception.CustomFirebaseAuthException;
-import vn.base.edumate.common.exception.ErrorCode;
-import vn.base.edumate.common.exception.InvalidTokenTypeException;
+import vn.base.edumate.common.exception.*;
 import vn.base.edumate.common.util.AuthType;
 import vn.base.edumate.common.util.TokenType;
 import vn.base.edumate.security.jwt.JwtService;
@@ -67,6 +64,14 @@ public class FirebaseAuthServiceStrategy implements AuthServiceStrategy {
 
             if (user == null) {
                 user = userService.createUserFromFirebase(decodedToken);
+            } else {
+                if (!user.isAccountNonLocked()) {
+                    throw new AccountLockedException(ErrorCode.USER_LOCKED);
+                }
+
+                if(user.isAccountDeleted()){
+                    throw new BaseApplicationException(ErrorCode.USER_DELETED);
+                }
             }
 
             authorities = user.getAuthorities().stream()

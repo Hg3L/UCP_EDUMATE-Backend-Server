@@ -105,10 +105,10 @@ public class User extends AbstractEntity implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonLocked() {
-        return statusHistories.stream()
-                .filter(userStatusHistory ->
-                        userStatusHistory.getUserStatus().getUserStatusCode().equals(UserStatusCode.LOCKED))
-                .findFirst()
-                .isEmpty();
+        return !UserStatusCode.LOCKED.equals(status);
+    }
+
+    public boolean isAccountDeleted() {
+        return UserStatusCode.DELETED.equals(status);
     }
 }

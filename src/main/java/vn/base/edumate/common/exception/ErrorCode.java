@@ -38,6 +38,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1009, HttpStatus.NOT_FOUND.value(), "Người dùng không tồn tại"),
     USER_STATUS_NOT_EXISTED(1010, HttpStatus.NOT_FOUND.value(), "Trạng thái người dùng không tồn tại"),
     USER_LOCKED(1011, HttpStatus.FORBIDDEN.value(), "Tài khoản đã bị khóa"),
+    USER_DELETED(1021, HttpStatus.GONE.value(), "Tài khoản đã bị xóa. Vui lòng liên hệ edumate.working@gmail.com để nhận hỗ trợ"),
     /**
      * RoleCode error codes
      */
