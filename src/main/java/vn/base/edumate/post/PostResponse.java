@@ -16,7 +16,7 @@ import vn.base.edumate.user.dto.UserResponse;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class PostResponse extends AbstractDTO {
     private String content;
     private String title;
@@ -24,6 +24,7 @@ public class PostResponse extends AbstractDTO {
     private TagResponse tag;
     private Integer likeCount;
     private Integer commentCount;
+    private Integer reportCount;
     private PostStatus status;
     private List<ImageResponse> images;
     private boolean liked;

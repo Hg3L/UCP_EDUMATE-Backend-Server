@@ -8,5 +8,5 @@ import vn.base.edumate.user.entity.User;
 public interface PostReportRepository extends JpaRepository<PostReport, Long> {
     Boolean existsByUserAndPost(User user, Post post);
 
-    long countByPost(Post post);
+    int countByPost(Post post);
 }

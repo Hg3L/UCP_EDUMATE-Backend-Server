@@ -15,4 +15,5 @@ public interface CommentService {
 
     List<CommentResponse> getCommentsByParentCommentId(Long parentCommentId);
     List<CommentResponse> getCommentsAndRepliesByCurrentUser();
+    List<CommentResponse> getAll();
 }
