@@ -80,6 +80,7 @@ public class DataInitializerConfig {
 
                 User admin = User.builder()
                         .id(UUID.randomUUID().toString())
+                        .avatarUrl("https://asset.cloudinary.com/dyawg2wm1/e800e34f83f3df39ecc0981e5860ad08")
                         .username(adminUsername)
                         .email(adminEmail)
                         .password(passwordEncoder.encode(adminPassword))

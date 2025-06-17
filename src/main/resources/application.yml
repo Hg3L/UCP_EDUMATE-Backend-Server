@@ -18,7 +18,7 @@ spring:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   thymeleaf:
     prefix: classpath:/templates/email/
     suffix: .html
@@ -34,7 +34,7 @@ system:
     admin:
       account:
         username: Edumate System Admin
-        email: admin@gmail.com
+        email: hoanglam22062003@gmail.com
         password: 12345678
   exception:
     show:
@@ -45,8 +45,11 @@ system:
         expiration-hour: 8
       refresh:
         expiration-day: 14
+      reset-password:
+        expiration-minute: 5
       secretAccessKey: f6d0a6c1b856198768038df5da8cf5ba16176f1a34006cd4e88addaef0448b48
       secretRefreshKey: RdzQtkYMquhS24sAcwUJyPk9z7Q10o8IeCCTwbZFAS4=
+      secretResetPasswordKey: sHTDbXnFgtOBoQIfwwbh1d8w3VJc2HteiBz4UW960xk=
   firebase:
     credential:
       path: firebase/firebase-admin-service-account.json

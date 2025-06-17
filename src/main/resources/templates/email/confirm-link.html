@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${subject}">Đặt lại mật khẩu - Edumate</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f4;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+       style="background-color:#f4f4f4;padding:40px 0;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="600" cellspacing="0" cellpadding="0"
+                   style="background:#ffffff;border-radius:12px;overflow:hidden;font-family:'Arial', sans-serif;">
+
+                <tr>
+                    <td align="center">
+                        <img src="https://res.cloudinary.com/dyawg2wm1/image/upload/v1745772491/Edumate_j8jqcs.png"
+                             style="width:100%; height:auto;" alt="Edumate"/>
+                    </td>
+                </tr>
+
+
+                <!-- Title -->
+                <tr>
+                    <td style="padding:30px 40px 10px 40px;text-align:center;">
+                        <h2 style="margin:0;color:#333333;font-size:24px;">Yêu cầu đặt lại mật khẩu</h2>
+                    </td>
+                </tr>
+
+                <!-- Message -->
+                <tr>
+                    <td style="padding:0 40px 20px 40px;text-align:center;">
+                        <p style="margin:0;color:#666666;font-size:16px;line-height:24px;">
+                            Xin chào <strong th:text="${userName}">Admin Edumate</strong>,<br/>
+                            Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản quản trị hệ thống Edumate.
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Button -->
+                <tr>
+                    <td style="padding:30px 40px;text-align:center;">
+                        <a th:href="${resetLink}"
+                           style="background-color:#2362ba;color:#ffffff;text-decoration:none;padding:14px 28px;font-size:16px;border-radius:6px;display:inline-block;font-weight:bold;"
+                           th:text="${actionText}">
+                            Đặt lại mật khẩu ngay
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Expiry Note -->
+                <tr>
+                    <td style="padding:0 40px 20px 40px;text-align:center;">
+                        <p style="color:#999999;font-size:14px;">
+                            Liên kết này chỉ có hiệu lực trong 5 phút kể từ thời điểm gửi. Nếu bạn không yêu cầu điều
+                            này, vui lòng bỏ qua email.
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="padding:30px 40px 10px 40px;text-align:center;">
+                        <p style="font-size:12px;color:#999999;">
+                            Cần hỗ trợ? Liên hệ <a href="mailto:edumate.working@gmail.com"
+                                                   style="color:#2f74eb;text-decoration:none;">edumate.working@gmail.com</a>
+                        </p>
+                        <p style="font-size:12px;color:#999999;margin-top:8px;">
+                            Xem <a href="https://www.freeprivacypolicy.com/live/b93057c6-82a7-47b7-9af7-5e5ca3870108"
+                                   style="color:#2f74eb;text-decoration:none;">chính sách bảo mật</a> của chúng tôi.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:10px 40px 30px 40px;text-align:center;">
+                        <p style="font-size:12px;color:#999999;">
+                            © 2025 Edumate. All rights reserved.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

@@ -14,6 +14,8 @@ public interface JwtService {
 
     String generateRefreshToken(UserDetails userDetails, List<String> authorities);
 
+    String generateResetPasswordToken(UserDetails userDetails);
+
     String extractIdentifier(String token, TokenType tokenType);
 
     Date extractExpiration(String token, TokenType tokenType);

@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import vn.base.edumate.common.exception.ErrorCode;
+import vn.base.edumate.common.exception.InvalidTokenTypeException;
 import vn.base.edumate.user.service.UserService;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class TokenServiceImpl implements TokenService{
     @Override
     public Token getToken(String token) {
         return tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Token not found"));
+                .orElseThrow(() -> new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN));
     }
 
     @Override

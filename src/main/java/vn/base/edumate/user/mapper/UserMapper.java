@@ -6,6 +6,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import vn.base.edumate.common.util.PostStatus;
 import vn.base.edumate.user.dto.UserResponse;
+import vn.base.edumate.user.dto.request.UpdateAccountRequest;
 import vn.base.edumate.user.dto.request.UpdateUserRequest;
 import vn.base.edumate.user.entity.User;
 
@@ -31,4 +32,6 @@ public interface UserMapper {
             userResponse.setPostCount(postCount);
         }
     }
+
+    void updateAccount(@MappingTarget User user, UpdateAccountRequest updateAccountRequest);
 }
