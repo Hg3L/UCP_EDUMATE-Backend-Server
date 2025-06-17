@@ -1,21 +1,19 @@
 package vn.base.edumate.post;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.client.RestClient;
 import vn.base.edumate.common.exception.BaseApplicationException;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.util.PostStatus;
@@ -30,6 +28,7 @@ import vn.base.edumate.tag.TagRepository;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.repository.UserRepository;
 import vn.base.edumate.user.service.UserService;
+import vn.base.edumate.vision.DeleteImageRequest;
 
 import static java.util.stream.Collectors.toList;
 
@@ -48,6 +47,7 @@ public class PostServiceImpl implements PostService {
     TagRepository tagRepository;
     PostLikeRepository postLikeRepository;
     PostReportRepository postReportRepository;
+    RestClient restClient;
 
     @Override
     public Post getPostById(Long id) {
@@ -230,6 +230,23 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long id) {
+
+        List<Long> imageIds = postRepository.findById(id)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED))
+                .getImages()
+                .stream()
+                .map(Image::getId)
+                .toList();
+
+        if (!imageIds.isEmpty()) {
+            restClient.method(HttpMethod.DELETE)
+                    .uri("http://localhost:8888/api/v1/delete")
+                    .body(DeleteImageRequest.builder().ids(imageIds).build())
+                    .retrieve()
+                    .body(Map.class);
+
+        }
+
         postRepository.deleteById(id);
     }
 

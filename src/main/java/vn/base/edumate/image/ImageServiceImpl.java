@@ -91,7 +91,7 @@ public class ImageServiceImpl implements ImageService {
 
             if (!imageAnalyzes.isEmpty()) {
                 restClient.post()
-                        .uri("http://localhost:8888/api/images/batch")
+                        .uri("http://localhost:8888/api/v1/batch")
                         .body(ImageAnalyzeBatch.builder().images(imageAnalyzes).build())
                         .retrieve()
                         .body(Map.class);
