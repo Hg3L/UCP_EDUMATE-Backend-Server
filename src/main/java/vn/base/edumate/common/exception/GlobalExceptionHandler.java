@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import vn.base.edumate.common.base.DataResponse;
 import vn.base.edumate.common.base.ErrorResponse;
 
 @RestControllerAdvice
@@ -137,4 +139,15 @@ public class GlobalExceptionHandler {
                 .message(errorCode.getMessage())
                 .build();
     }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public DataResponse<Void> handlingMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
+        log.error("MethodArgumentNotValidException: ", e);
+        ErrorCode errorCode = ErrorCode.valueOf(e.getBindingResult().getFieldError().getDefaultMessage());
+        return DataResponse.<Void>builder()
+                .message(errorCode.getMessage())
+                .status(errorCode.getCode())
+                .build();
+    }
+
 }

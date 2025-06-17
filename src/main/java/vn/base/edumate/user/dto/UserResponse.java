@@ -34,6 +34,7 @@ public class UserResponse {
     String email;
 
     String avatarUrl;
+
     UserStatusCode status;
 
     String introduction;
