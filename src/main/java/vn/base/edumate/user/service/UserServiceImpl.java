@@ -36,6 +36,7 @@ import vn.base.edumate.role.Role;
 import vn.base.edumate.role.RoleService;
 import vn.base.edumate.user.UserSpecification;
 import vn.base.edumate.user.dto.UserResponse;
+import vn.base.edumate.user.dto.request.UpdateAccountRequest;
 import vn.base.edumate.user.dto.request.UpdateUserRequest;
 import vn.base.edumate.user.entity.User;
 import vn.base.edumate.user.entity.UserStatus;
@@ -98,6 +99,59 @@ public class UserServiceImpl implements UserService {
         return userPage.map(userMapper::toUserResponse);
     }
 
+    @Override
+    public void setUserStatus(UpdateAccountRequest request) {
+
+        var user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.USER_NOT_EXISTED));
+
+        log.info("Updating user status for user: {}", user);
+
+        userMapper.updateAccount(user, request);
+
+        UserStatus userStatus = userStatusService.getUserStatusByStatusCode(user.getStatus());
+        UserStatusHistory userStatusHistory = UserStatusHistory.builder()
+                .user(user)
+                .userStatus(userStatus)
+                .reason(request.getReason() != null ? request.getReason() : "")
+                .build();
+
+        user.getStatusHistories().add(userStatusHistory);
+        userRepository.save(user);
+
+    }
+
+    @Override
+    public Page<UserResponse> getDeletedUsers(int page, int size, @Nullable AuthMethod authMethod, @Nullable String keyword) {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+
+        Specification<User> specification = Specification
+                .where(UserSpecification.hasRole(RoleCode.USER))
+                .and(UserSpecification.hasUserStatus(UserStatusCode.DELETED));
+
+        if (authMethod != null) {
+            specification = specification.and(UserSpecification.hasAuthMethod(authMethod));
+        }
+
+
+        if (keyword != null && !keyword.isBlank()) {
+            specification = specification.and(UserSpecification.matchesKeyword(keyword));
+        }
+
+        Page<User> userPage = userRepository.findAll(specification, pageable);
+
+        if(!userPage.hasContent()) {
+            log.warn("No users found with the given criteria: page={}, size={}, authMethod={}",
+                    page, size, authMethod);
+            return Page.empty(pageable);
+        }
+
+        return userPage.map(userMapper::toUserResponse);
+    }
+
+
     @Transactional
     @Override
     public User createUserFromFirebase(FirebaseToken decodedToken) {
@@ -155,7 +209,9 @@ public class UserServiceImpl implements UserService {
 
     private void handleEmail(String email, String name) {
         try {
-            Map<String, Object> variables = Map.of("subject", "EDUMATE Xin Chào!", "userName", name);
+            Map<String, Object> variables = Map.of(
+                    "subject", "EDUMATE Xin Chào!",
+                    "userName", name);
             mailService.sendEmailWithTemplate(email, "welcome", variables);
         } catch (MessagingException | UnsupportedEncodingException e) {
             log.error("Failed to send email to {}: {}", email, e.getMessage());

@@ -1,10 +1,16 @@
 package vn.base.edumate.common.exception;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,8 +20,9 @@ import org.springframework.web.context.request.WebRequest;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import vn.base.edumate.common.base.DataResponse;
+import vn.base.edumate.common.base.ErrorDetail;
 import vn.base.edumate.common.base.ErrorResponse;
+import vn.base.edumate.common.validation.ValidationMessageResolver;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -25,8 +32,10 @@ public class GlobalExceptionHandler {
     @Value("${system.exception.show.client-info}")
     private boolean showClientInfo;
 
+    private final ValidationMessageResolver validationMessageResolver;
+
     /**
-     *  Handle runtime exception
+     * Handle runtime exception
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -139,15 +148,52 @@ public class GlobalExceptionHandler {
                 .message(errorCode.getMessage())
                 .build();
     }
+
+    /**
+     * Handle validation exception
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public DataResponse<Void> handlingMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
-        log.error("MethodArgumentNotValidException: ", e);
-        ErrorCode errorCode = ErrorCode.valueOf(e.getBindingResult().getFieldError().getDefaultMessage());
-        return DataResponse.<Void>builder()
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e, WebRequest request) {
+        Class<?> targetClass = e.getBindingResult().getTarget().getClass();
+
+        List<ErrorDetail> details = new ArrayList<>();
+
+        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            details.add(ErrorDetail.builder()
+                    .field(fieldError.getField())
+                    .message(validationMessageResolver.resolveMessage(
+                            fieldError.getField(),
+                            e.getBindingResult().getTarget().getClass(),
+                            fieldError.getDefaultMessage()
+                    ))
+                    .rejectedValue(fieldError.getRejectedValue())
+                    .build());
+        }
+
+        for (ObjectError objectError : e.getBindingResult().getGlobalErrors()) {
+            details.add(ErrorDetail.builder()
+                    .field(objectError.getObjectName())
+                    .message(validationMessageResolver.resolveMessage(
+                            objectError.getObjectName(),
+                            e.getBindingResult().getTarget().getClass(),
+                            objectError.getDefaultMessage()
+                    ))
+                    .rejectedValue(null)
+                    .build());
+        }
+
+        ErrorCode errorCode = ErrorCode.VALIDATION_ERROR;
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
                 .message(errorCode.getMessage())
-                .status(errorCode.getCode())
+                .details(details)
                 .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
+
 
 }

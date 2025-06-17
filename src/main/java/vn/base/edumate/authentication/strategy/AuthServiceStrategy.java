@@ -10,4 +10,5 @@ public interface AuthServiceStrategy {
     TokenResponse authenticate(Object o);
 
     TokenResponse refreshToken(Object o);
+
 }

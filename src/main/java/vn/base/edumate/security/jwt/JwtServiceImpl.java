@@ -30,11 +30,17 @@ public class JwtServiceImpl implements JwtService {
     @Value("${system.security.jwt.refresh.expiration-day}")
     private long refreshExpiration;
 
+    @Value("${system.security.jwt.reset-password.expiration-minute}")
+    private long resetPasswordExpiration;
+
     @Value("${system.security.jwt.secretAccessKey}")
     private String secretAccessKey;
 
     @Value("${system.security.jwt.secretRefreshKey}")
     private String secretRefreshKey;
+
+    @Value("${system.security.jwt.secretResetPasswordKey}")
+    private String secretResetPasswordKey;
 
     @Override
     public String generateAccessToken(UserDetails userDetails, List<String> authorities) {
@@ -50,6 +56,11 @@ public class JwtServiceImpl implements JwtService {
         claims.put("authorities", authorities);
 
         return generateToken(claims, userDetails, TokenType.REFRESH_TOKEN);
+    }
+
+    @Override
+    public String generateResetPasswordToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails, TokenType.RESET_PASSWORD_TOKEN);
     }
 
     @Override
@@ -90,6 +101,14 @@ public class JwtServiceImpl implements JwtService {
                     .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * refreshExpiration))
                     .signWith(getKey(TokenType.REFRESH_TOKEN), SignatureAlgorithm.HS256)
                     .compact();
+
+            case RESET_PASSWORD_TOKEN -> Jwts.builder()
+                    .setClaims(claims)
+                    .setSubject(userId)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * resetPasswordExpiration))
+                    .signWith(getKey(TokenType.RESET_PASSWORD_TOKEN), SignatureAlgorithm.HS256)
+                    .compact();
         };
     }
 
@@ -100,6 +119,9 @@ public class JwtServiceImpl implements JwtService {
             }
             case REFRESH_TOKEN -> {
                 return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretRefreshKey));
+            }
+            case RESET_PASSWORD_TOKEN -> {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretResetPasswordKey));
             }
             default -> throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN_TYPE);
         }

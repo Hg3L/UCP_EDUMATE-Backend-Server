@@ -5,6 +5,10 @@ import org.springframework.http.HttpStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
@@ -49,7 +53,9 @@ public enum ErrorCode {
      */
     INVALID_ARGUMENT(1013, HttpStatus.BAD_REQUEST.value(), "Tham số không hợp lệ"),
     UNCATEGORIZED(9999, HttpStatus.INTERNAL_SERVER_ERROR.value(), "Lỗi không xác định"),
-
+    INVALID_EMAIL(1014, HttpStatus.BAD_REQUEST.value(), "Email không hợp lệ"),
+    INVALID_PASSWORD(1023, HttpStatus.BAD_REQUEST.value(), "Mật khẩu phải chứa từ %d - %d ký tự"),
+    INVALID_PASSWORD_CONFIRM(1024, HttpStatus.BAD_REQUEST.value(), "Mật khẩu xác nhận không khớp"),
     /**
      * Tag error codes
      */
@@ -79,9 +85,25 @@ public enum ErrorCode {
     /**
      * Report error codes
      */
-    HISTORY_NOT_EXISTED(1020, HttpStatus.NOT_FOUND.value(), "Lịch sử không tồn tại");
+    HISTORY_NOT_EXISTED(1020, HttpStatus.NOT_FOUND.value(), "Lịch sử không tồn tại"),
+
+    /**
+     * Error code for validation errors
+     */
+    VALIDATION_ERROR(1022, HttpStatus.BAD_REQUEST.value(), "Lỗi xác thực dữ liệu");
 
     private final int code;
     private final int status;
     private final String message;
+
+    private static final Map<String, ErrorCode> ERROR_CODE_MAP = Stream.of(values())
+            .collect(Collectors.toMap(Enum::name, e -> e));
+
+    public static ErrorCode from(String name) {
+        return ERROR_CODE_MAP.getOrDefault(name, null);
+    }
+
+    public String formatMessage(Object ...args) {
+        return String.format(this.message, args);
+    }
 }

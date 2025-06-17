@@ -15,6 +15,7 @@ import vn.base.edumate.common.util.AuthMethod;
 import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.dto.request.CreateUserStatusHistory;
+import vn.base.edumate.user.dto.request.UpdateAccountRequest;
 import vn.base.edumate.user.dto.request.UpdateUserRequest;
 import vn.base.edumate.user.entity.UserStatus;
 import vn.base.edumate.user.service.UserService;
@@ -55,8 +56,8 @@ public class UserController {
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('USER')")
-    public DataResponse<UserResponse> updateUser(@RequestParam(value = "username",required = false) String username,
-                                                    @RequestParam(value = "status", required = false) UserStatusCode status,
+    public DataResponse<UserResponse> updateUser(@RequestParam(value = "username", required = false) String username,
+                                                 @RequestParam(value = "status", required = false) UserStatusCode status,
                                                  @RequestPart(value = "multipartFiles", required = false) MultipartFile multipartFiles) throws IOException {
         UpdateUserRequest updateUserRequest = UpdateUserRequest.builder()
                 .username(username)
@@ -73,6 +74,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     public DataResponse<List<UserResponse>> getAllUsers(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -85,6 +87,44 @@ public class UserController {
         return DataResponse.<List<UserResponse>>builder()
                 .message("Lấy danh sách người dùng thành công")
                 .data(userResponses.getContent())
+                .build();
+    }
+
+    @PutMapping("/status")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public DataResponse<Void> setUserStatus(
+            @RequestBody UpdateAccountRequest request) {
+
+        userService.setUserStatus(request);
+        return DataResponse.<Void>builder()
+                .message("Cập nhật trạng thái người dùng thành công")
+                .build();
+    }
+
+    @GetMapping("/deleted")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public DataResponse<List<UserResponse>> getDeletedUsers(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(required = false) AuthMethod authMethod,
+            @RequestParam(required = false) String keyword) {
+
+        Page<UserResponse> userResponses = userService.getDeletedUsers(page, size, authMethod, keyword);
+        log.info("Get deleted users: page {}, size {}, keyword {}", page, size, keyword);
+        return DataResponse.<List<UserResponse>>builder()
+                .message("Lấy danh sách người dùng đã xóa thành công")
+                .data(userResponses.getContent())
+                .build();
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')")
+    public DataResponse<UserResponse> getCurrentUserInfo() {
+        UserResponse userResponse = userService.getCurrentUserToResponse();
+        log.info("Get current user info: {}", userResponse);
+        return DataResponse.<UserResponse>builder()
+                .message("Lấy thông tin người dùng thành công")
+                .data(userResponse)
                 .build();
     }
 
