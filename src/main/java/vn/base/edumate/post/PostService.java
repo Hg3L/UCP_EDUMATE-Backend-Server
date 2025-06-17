@@ -21,6 +21,8 @@ public interface PostService {
 
     PostResponse getPostResponseById(Long id);
 
+    PostResponse getPostByIdAdmin(Long id);
+
     Long getPostIdByImageId(Long id);
 
     void deletePost(Long id);

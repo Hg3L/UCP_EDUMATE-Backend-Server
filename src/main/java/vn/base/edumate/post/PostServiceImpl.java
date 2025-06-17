@@ -220,7 +220,17 @@ public class PostServiceImpl implements PostService {
         PostResponse postResponse =  postMapper.toResponse(post,user,postLikeRepository);
         postResponse.setCommentCount(post.getComments().size());
         postResponse.setReportCount(postReportRepository.countByPost(post));
+        return postResponse;
+    }
 
+    @Override
+    public PostResponse getPostByIdAdmin(Long id) {
+        Post post = postRepository
+                .findById(id)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED));
+        PostResponse postResponse =  postMapper.toResponse(post);
+        postResponse.setCommentCount(post.getComments().size());
+        postResponse.setReportCount(postReportRepository.countByPost(post));
         return postResponse;
     }
 

@@ -22,6 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/comment")
                 .addPathPatterns("/comment/like/**").
                 addPathPatterns("/comment/*/replies")
-                .addPathPatterns("/v1/auth/firebase"); // Áp dụng cho
+                .addPathPatterns("/v1/auth/firebase")
+                .addPathPatterns("/history/**"); // Áp dụng cho
     }
 }
