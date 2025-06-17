@@ -21,6 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/image")
                 .addPathPatterns("/comment")
                 .addPathPatterns("/comment/like/**").
-                addPathPatterns("/comment/*/replies"); // Áp dụng cho
+                addPathPatterns("/comment/*/replies")
+                .addPathPatterns("/v1/auth/firebase"); // Áp dụng cho
     }
 }
