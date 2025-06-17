@@ -65,6 +65,9 @@ public enum ErrorCode {
      * Post error codes
      */
     POST_NOT_EXISTED(1016, HttpStatus.NOT_FOUND.value(), "Bài viết không tồn tại"),
+    TITLE_POST_NOT_VALID(1022,HttpStatus.BAD_REQUEST.value(), "Nội dung tiêu đề không được để trống"),
+    TITLE_POST_OUT_OF_RANGE(1023,HttpStatus.BAD_REQUEST.value(), "Vui lòng nhập tiêu đề không quá 100 ký tự"),
+    CONTENT_POST_OUT_OF_RANGE(1024,HttpStatus.BAD_REQUEST.value(), "Vui lòng nhập nội dung không quá 1000 ký tự"),
     /**
      * Image error codes
      */
@@ -73,6 +76,7 @@ public enum ErrorCode {
      * Comment error codes
      */
     COMMENT_NOT_EXISTED(1018, HttpStatus.NOT_FOUND.value(), "Comment không tồn tại"),
+    COMMENT_NOT_VALID(1021,HttpStatus.BAD_REQUEST.value(), "Nội dung bình luận không được để trống"),
     /**
      * Report error codes
      */
