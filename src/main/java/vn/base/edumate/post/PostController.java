@@ -4,6 +4,7 @@ import java.awt.print.Pageable;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +29,7 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    DataResponse<PostResponse> createPost(@RequestBody CreatePostRequest request) {
+    DataResponse<PostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
         return DataResponse.<PostResponse>builder()
                 .message("Thêm bài viết thành công!")
                 .data(postService.savePost(request))

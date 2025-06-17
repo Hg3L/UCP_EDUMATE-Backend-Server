@@ -2,6 +2,7 @@ package vn.base.edumate.comment;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,7 @@ public class CommentController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public DataResponse<CommentResponse> createComment(
-            @RequestParam Long postId, @RequestBody CreateCommentRequest request) {
+            @RequestParam Long postId,@Valid @RequestBody CreateCommentRequest request) {
         return DataResponse.<CommentResponse>builder()
                 .message("đăng bình luận thành công")
                 .data(commentService.createComment(postId, request))
@@ -63,7 +64,7 @@ public class CommentController {
     @PostMapping("/{parentId}/replies")
     @PreAuthorize("hasRole('USER')")
     public DataResponse<CommentResponse> saveReply(
-            @PathVariable Long parentId, @RequestBody CreateCommentRequest createCommentRequest) {
+            @PathVariable Long parentId, @RequestBody @Valid CreateCommentRequest createCommentRequest) {
         return DataResponse.<CommentResponse>builder()
                 .data(commentService.createChildComment(createCommentRequest, parentId))
                 .message("success")

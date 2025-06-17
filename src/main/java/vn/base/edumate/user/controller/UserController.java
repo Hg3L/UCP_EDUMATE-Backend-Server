@@ -55,7 +55,7 @@ public class UserController {
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('USER')")
-    public DataResponse<UserResponse> updateUser(   @RequestParam(value = "username",required = false) String username,
+    public DataResponse<UserResponse> updateUser(@RequestParam(value = "username",required = false) String username,
                                                     @RequestParam(value = "status", required = false) UserStatusCode status,
                                                  @RequestPart(value = "multipartFiles", required = false) MultipartFile multipartFiles) throws IOException {
         UpdateUserRequest updateUserRequest = UpdateUserRequest.builder()
