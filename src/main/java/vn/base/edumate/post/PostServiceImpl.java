@@ -224,6 +224,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostResponse getPostByIdAdmin(Long id) {
+        Post post = postRepository
+                .findById(id)
+                .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED));
+        PostResponse postResponse =  postMapper.toResponse(post);
+        postResponse.setCommentCount(post.getComments().size());
+        postResponse.setReportCount(postReportRepository.countByPost(post));
+        return postResponse;
+    }
+
+    @Override
     public Long getPostIdByImageId(Long id) {
         return postRepository.findByImages_Id(id)
                 .orElseThrow(() -> new BaseApplicationException(ErrorCode.POST_NOT_EXISTED))

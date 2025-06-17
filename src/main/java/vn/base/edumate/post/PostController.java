@@ -101,6 +101,13 @@ public class PostController {
                 .data(postService.getPostResponseById(id))
                 .build();
     }
+    @GetMapping("/admin/{id}")
+    DataResponse<PostResponse> getPostByAdminId(@PathVariable("id") Long id) {
+        return DataResponse.<PostResponse>builder()
+                .message("tìm bài viết thành công")
+                .data(postService.getPostResponseById(id))
+                .build();
+    }
 
     @DeleteMapping("/{id}")
     DataResponse<Integer> deletePost(@PathVariable("id") Long id) {
