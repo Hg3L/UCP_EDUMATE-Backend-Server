@@ -55,6 +55,7 @@ public enum ErrorCode {
      */
     TAG_NOT_EXISTED(1015, HttpStatus.NOT_FOUND.value(), "Tag không tồn tại"),
     TAG_TYPE_NOT_EXISTED(1016, HttpStatus.NOT_FOUND.value(), "Loại tag này không tồn tại"),
+    TAG_ID_REQUIRED(1025,HttpStatus.BAD_REQUEST.value(), "Vui lòng chọn loại bài viết"),
     /**
      * Post error codes
      */

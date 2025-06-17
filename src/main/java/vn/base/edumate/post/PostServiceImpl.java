@@ -220,7 +220,6 @@ public class PostServiceImpl implements PostService {
         PostResponse postResponse =  postMapper.toResponse(post,user,postLikeRepository);
         postResponse.setCommentCount(post.getComments().size());
         postResponse.setReportCount(postReportRepository.countByPost(post));
-
         return postResponse;
     }
 
