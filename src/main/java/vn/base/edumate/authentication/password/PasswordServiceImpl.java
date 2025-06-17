@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.base.edumate.common.exception.ErrorCode;
 import vn.base.edumate.common.exception.InvalidTokenTypeException;
@@ -32,6 +33,8 @@ public class PasswordServiceImpl implements PasswordService {
     private final JwtService jwtService;
 
     private final MailService mailService;
+
+    private final PasswordEncoder passwordEncoder;
 
     private static final String RESET_PASSWORD_LINK = "https://localhost:3000/reset-password";
 
@@ -145,7 +148,7 @@ public class PasswordServiceImpl implements PasswordService {
             throw new InvalidTokenTypeException(ErrorCode.INVALID_TOKEN);
         }
 
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         userService.saveUser(user);
     }
