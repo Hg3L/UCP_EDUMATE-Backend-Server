@@ -230,10 +230,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(Long id) {
-        Post post = getPostById(id);
-        post.setStatus(PostStatus.DELETED);
-        post.getComments().clear();
-        postRepository.save(post);
+        postRepository.deleteById(id);
     }
 
     @Override

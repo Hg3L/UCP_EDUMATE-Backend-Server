@@ -1,5 +1,6 @@
 package vn.base.edumate.interceptor;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -39,6 +40,15 @@ public class UserStatusInterceptor implements HandlerInterceptor {
 
             User user = userService.getUserById(userId);
             UserStatusCode userStatus = user.getStatus();
+            String requestURI = request.getRequestURI();
+            // Xử lý riêng cho endpoint /login
+            if (requestURI.equals("/v1/auth/firebase")) {
+                if (user.getStatus() == UserStatusCode.LOCKED) {
+                    sendLockedResponse(response);
+                    return false;
+                }
+                return true;
+            }
             if (userStatus == UserStatusCode.LOCKED) {
                 response.setStatus(HttpStatus.FORBIDDEN.value()); // 403
                 response.setContentType("application/json;charset=UTF-8");
@@ -92,5 +102,15 @@ public class UserStatusInterceptor implements HandlerInterceptor {
         }
 
         return true;
+    }
+    private void sendLockedResponse(HttpServletResponse response) throws IOException, IOException {
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType("application/json");
+        response.getWriter().write("""
+            {
+                "code": 403,
+                "message": "Tài khoản đã bị khóa vĩnh viễn"
+            }
+            """);
     }
 }

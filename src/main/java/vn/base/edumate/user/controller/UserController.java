@@ -16,6 +16,7 @@ import vn.base.edumate.common.util.UserStatusCode;
 import vn.base.edumate.user.dto.UserResponse;
 import vn.base.edumate.user.dto.request.CreateUserStatusHistory;
 import vn.base.edumate.user.dto.request.UpdateUserRequest;
+import vn.base.edumate.user.entity.UserStatus;
 import vn.base.edumate.user.service.UserService;
 import vn.base.edumate.user.service.UserStatusHistoryService;
 
@@ -54,11 +55,14 @@ public class UserController {
 
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('USER')")
-    public DataResponse<UserResponse> updateUser(@RequestPart("username") String username,
+    public DataResponse<UserResponse> updateUser(   @RequestParam(value = "username",required = false) String username,
+                                                    @RequestParam(value = "status", required = false) UserStatusCode status,
                                                  @RequestPart(value = "multipartFiles", required = false) MultipartFile multipartFiles) throws IOException {
         UpdateUserRequest updateUserRequest = UpdateUserRequest.builder()
                 .username(username)
+                .status(status)
                 .file(multipartFiles)
+
                 .build();
         UserResponse userResponse = userService.updateUser(updateUserRequest);
         log.info("username", userResponse.getUsername());
@@ -83,4 +87,5 @@ public class UserController {
                 .data(userResponses.getContent())
                 .build();
     }
+
 }
