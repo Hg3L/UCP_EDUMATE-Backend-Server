@@ -105,7 +105,7 @@ public class PostController {
     DataResponse<PostResponse> getPostByAdminId(@PathVariable("id") Long id) {
         return DataResponse.<PostResponse>builder()
                 .message("tìm bài viết thành công")
-                .data(postService.getPostResponseById(id))
+                .data(postService.getPostByIdAdmin(id))
                 .build();
     }
 
