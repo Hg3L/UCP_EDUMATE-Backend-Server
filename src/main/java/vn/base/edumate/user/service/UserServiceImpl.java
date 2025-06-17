@@ -2,6 +2,7 @@ package vn.base.edumate.user.service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +110,20 @@ public class UserServiceImpl implements UserService {
 
         userMapper.updateAccount(user, request);
 
+        if(request.getStatus().equals(UserStatusCode.WARNING_LOW.name())) {
+            user.setExpiredAt(LocalDateTime.now().plusDays(UserStatusCode.WARNING_LOW.getDurationInDays()));
+        }
+
+        if(request.getStatus().equals(UserStatusCode.WARNING_MEDIUM.name())) {
+            user.setExpiredAt(LocalDateTime.now().plusDays(UserStatusCode.WARNING_LOW.getDurationInDays()));
+        }
+
+        if(request.getStatus().equals(UserStatusCode.WARNING_HIGH.name())) {
+            user.setExpiredAt(LocalDateTime.now().plusDays(UserStatusCode.WARNING_HIGH.getDurationInDays()));
+        }
+
         UserStatus userStatus = userStatusService.getUserStatusByStatusCode(user.getStatus());
+
         UserStatusHistory userStatusHistory = UserStatusHistory.builder()
                 .user(user)
                 .userStatus(userStatus)
