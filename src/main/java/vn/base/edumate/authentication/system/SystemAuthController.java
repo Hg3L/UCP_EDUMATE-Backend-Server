@@ -78,11 +78,18 @@ public class SystemAuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<TokenResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request, HttpServletResponse response) {
 
-        String response = passwordService.sendLinkResetPassword(request);
+        TokenResponse tokenResponse = passwordService.sendLinkResetPassword(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Cookie resetPasswordToken = new Cookie("reset_password_token", tokenResponse.getResetPasswordToken());
+        resetPasswordToken.setHttpOnly(true);
+        resetPasswordToken.setSecure(false);
+        resetPasswordToken.setPath("/");
+        resetPasswordToken.setMaxAge((int) ((tokenResponse.getRefreshTokenExpiresIn() - System.currentTimeMillis()) / 1000));
+        response.addCookie(resetPasswordToken);
+
+        return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
     @PostMapping("/reset-password")

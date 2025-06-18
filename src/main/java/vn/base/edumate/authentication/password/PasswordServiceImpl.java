@@ -14,6 +14,7 @@ import vn.base.edumate.common.util.TokenType;
 import vn.base.edumate.email.MailService;
 import vn.base.edumate.security.jwt.JwtService;
 import vn.base.edumate.token.Token;
+import vn.base.edumate.token.TokenResponse;
 import vn.base.edumate.token.TokenService;
 import vn.base.edumate.user.mapper.UserMapper;
 import vn.base.edumate.user.service.UserService;
@@ -39,7 +40,7 @@ public class PasswordServiceImpl implements PasswordService {
     private static final String RESET_PASSWORD_LINK = "http://localhost:3000/reset-password";
 
     @Override
-    public String sendLinkResetPassword(ForgotPasswordRequest request) {
+    public TokenResponse sendLinkResetPassword(ForgotPasswordRequest request) {
 
         var user = userService.getUserByEmail(request.getEmail());
 
@@ -55,6 +56,10 @@ public class PasswordServiceImpl implements PasswordService {
 
         String resetToken = jwtService.generateResetPasswordToken(user);
 
+        long resetTokenExpire = jwtService
+                .extractExpiration(resetToken, TokenType.RESET_PASSWORD_TOKEN)
+                .getTime();
+
         Token token = Token.builder()
                 .token(resetToken)
                 .user(user)
@@ -69,7 +74,10 @@ public class PasswordServiceImpl implements PasswordService {
 
         handleEmail(user.getEmail(), resetLink, user.getUsername());
 
-        return resetToken;
+        return TokenResponse.builder()
+                .resetPasswordToken(resetToken)
+                .resetPasswordTokenExpiresIn(resetTokenExpire)
+                .build();
     }
 
     @Override
