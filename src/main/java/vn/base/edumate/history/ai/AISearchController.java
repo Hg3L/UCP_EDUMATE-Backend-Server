@@ -1,11 +1,13 @@
 package vn.base.edumate.history.ai;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.base.edumate.common.base.DataResponse;
+import vn.base.edumate.post.PostResponse;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -18,12 +20,15 @@ public class AISearchController {
     private final AISearchService aiSearchService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void addNewHistoryAISearch(@ModelAttribute AISearchRequest request) {
+    public DataResponse<Void> addNewHistoryAISearch(@ModelAttribute AISearchRequest request) {
         aiSearchService.addNewHistoryAISearch(request);
+        return DataResponse.<Void>builder()
+                .message("Success")
+                .build();
     }
 
 
-    @GetMapping
+    @GetMapping("/all/history")
     public ResponseEntity<List<AISearchResponse>> getHistories() {
         List<AISearchResponse> histories = aiSearchService.getHistoriesByUser();
         return ResponseEntity.ok(histories);
@@ -38,14 +43,18 @@ public class AISearchController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHistory(@PathVariable Long id) {
+    public DataResponse<Void> deleteHistory(@PathVariable Long id) {
         aiSearchService.deleteHistoryById(id);
-        return ResponseEntity.noContent().build();
+        return DataResponse.<Void>builder()
+                .message("Success")
+                .build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAllHistories() {
+    public DataResponse<Void> deleteAllHistories() {
         aiSearchService.deleteAllHistoriesByUser();
-        return ResponseEntity.noContent().build();
+        return DataResponse.<Void>builder()
+                .message("Success")
+                .build();
     }
 }

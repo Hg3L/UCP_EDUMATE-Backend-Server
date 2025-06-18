@@ -109,7 +109,7 @@ public class UserStatusInterceptor implements HandlerInterceptor {
         response.getWriter().write("""
             {
                 "code": 403,
-                "message": "Tài khoản đã bị khóa vĩnh viễn"
+                "message": "Tài khoản đã bị khóa vĩnh viễn. Vui lòng liên hệ hỗ trợ."
             }
             """);
     }
