@@ -1,6 +1,8 @@
 package vn.base.edumate.authentication.system;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,24 +31,54 @@ public class SystemAuthController {
     private final PasswordService passwordService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody SystemAuthRequest request) {
-
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody SystemAuthRequest request, HttpServletResponse response) {
         AuthServiceStrategy strategy = authStrategyContext.getAuthServiceStrategy(AuthType.SYSTEM);
-
         TokenResponse tokenResponse = strategy.authenticate(request);
+
+        // Set refresh_token vào HttpOnly cookie
+        Cookie refreshCookie = new Cookie("refresh_token", tokenResponse.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false); // true nếu dùng HTTPS
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge((int) ((tokenResponse.getRefreshTokenExpiresIn() - System.currentTimeMillis()) / 1000));
+        response.addCookie(refreshCookie);
+
+        // Set access_token vào cookie (FE có thể đọc được)
+        Cookie accessCookie = new Cookie("access_token", tokenResponse.getAccessToken());
+        accessCookie.setHttpOnly(false); // FE có thể đọc
+        accessCookie.setSecure(false); // true nếu dùng HTTPS
+        accessCookie.setPath("/");
+        accessCookie.setMaxAge((int) ((tokenResponse.getAccessTokenExpiresIn() - System.currentTimeMillis()) / 1000));
+        response.addCookie(accessCookie);
 
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request) {
+    public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         AuthServiceStrategy authServiceStrategy = authStrategyContext.getAuthServiceStrategy(AuthType.SYSTEM);
         TokenResponse tokenResponse = authServiceStrategy.refreshToken(request);
+
+        Cookie refreshCookie = new Cookie("refresh_token", tokenResponse.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false); // true nếu dùng HTTPS
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge((int) ((tokenResponse.getRefreshTokenExpiresIn() - System.currentTimeMillis()) / 1000));
+        response.addCookie(refreshCookie);
+
+        // Set access_token vào cookie (FE có thể đọc được)
+        Cookie accessCookie = new Cookie("access_token", tokenResponse.getAccessToken());
+        accessCookie.setHttpOnly(false); // FE có thể đọc
+        accessCookie.setSecure(false); // true nếu dùng HTTPS
+        accessCookie.setPath("/");
+        accessCookie.setMaxAge((int) ((tokenResponse.getAccessTokenExpiresIn() - System.currentTimeMillis()) / 1000));
+        response.addCookie(accessCookie);
+
         return new ResponseEntity<>(tokenResponse, HttpStatus.OK);
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request)  {
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 
         String response = passwordService.sendLinkResetPassword(request);
 
