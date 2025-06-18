@@ -36,7 +36,7 @@ public class PasswordServiceImpl implements PasswordService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private static final String RESET_PASSWORD_LINK = "https://localhost:3000/reset-password";
+    private static final String RESET_PASSWORD_LINK = "http://localhost:3000/reset-password";
 
     @Override
     public String sendLinkResetPassword(ForgotPasswordRequest request) {
