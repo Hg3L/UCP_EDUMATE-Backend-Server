@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,8 @@ public class SystemAuthServiceStrategy implements AuthServiceStrategy {
 
     private final UserDetailsService userDetailsService;
 
+    private final AuthenticationManager authenticationManager;
+
     private final JwtService jwtService;
 
     private final TokenService tokenService;
@@ -49,13 +54,14 @@ public class SystemAuthServiceStrategy implements AuthServiceStrategy {
         SystemAuthRequest request = (SystemAuthRequest) o;
 
         log.info("---------- System Authenticate ----------");
+        log.info("---------- Authenticate ----------");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        var user = userService.getUserByEmail(request.getEmail());
+        log.info("Is authenticated: {}", authentication.isAuthenticated());
+        log.info("Authorities: {}", authentication.getAuthorities().toString());
 
-        if (user == null) {
-            log.error("User not found with email: {}", request.getEmail());
-            throw new ResourceNotFoundException(ErrorCode.USER_NOT_EXISTED);
-        }
+        User user = userService.getUserByEmail(request.getEmail());
 
         List<String> authorities = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
