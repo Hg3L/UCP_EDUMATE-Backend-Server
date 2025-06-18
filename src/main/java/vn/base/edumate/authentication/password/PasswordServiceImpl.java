@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.base.edumate.common.exception.ErrorCode;
@@ -16,7 +17,6 @@ import vn.base.edumate.security.jwt.JwtService;
 import vn.base.edumate.token.Token;
 import vn.base.edumate.token.TokenResponse;
 import vn.base.edumate.token.TokenService;
-import vn.base.edumate.user.mapper.UserMapper;
 import vn.base.edumate.user.service.UserService;
 
 import java.io.UnsupportedEncodingException;
@@ -37,7 +37,8 @@ public class PasswordServiceImpl implements PasswordService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private static final String RESET_PASSWORD_LINK = "http://localhost:3000/reset-password";
+    @Value("${system.default.client.url}")
+    private String resetPasswordLink;
 
     @Override
     public TokenResponse sendLinkResetPassword(ForgotPasswordRequest request) {
@@ -70,7 +71,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         tokenService.saveToken(token);
 
-        String resetLink = RESET_PASSWORD_LINK + "?token=" + resetToken;
+        String resetLink = resetPasswordLink + "/reset-password?token=" + resetToken;
 
         handleEmail(user.getEmail(), resetLink, user.getUsername());
 

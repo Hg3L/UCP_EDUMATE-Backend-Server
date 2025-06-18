@@ -1,5 +1,7 @@
 server:
   port: 8080
+  address: 0.0.0.0
+
 
 spring:
   application:
@@ -35,6 +37,10 @@ system:
         username: Edumate System Admin
         email: hoanglam22062003@gmail.com
         password: 12345678
+    client:
+      url: http://172.20.10.5:3000
+      fastapi-batch: http://172.20.10.5:8888/api/v1/batch
+      fastapi-delete: "http://172.20.10.5:8888/api/v1/delete"
   exception:
     show:
       client-info: false

@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -37,17 +38,20 @@ import static java.util.stream.Collectors.toList;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostServiceImpl implements PostService {
-    PostRepository postRepository;
-    PostMapper postMapper;
-    UserRepository userRepository;
-    ImageRepository imageRepository;
-    UserService userService;
-    TagRepository tagRepository;
-    PostLikeRepository postLikeRepository;
-    PostReportRepository postReportRepository;
-    RestClient restClient;
+    final PostRepository postRepository;
+    final PostMapper postMapper;
+    final UserRepository userRepository;
+    final ImageRepository imageRepository;
+    final UserService userService;
+    final TagRepository tagRepository;
+    final PostLikeRepository postLikeRepository;
+    final PostReportRepository postReportRepository;
+    final RestClient restClient;
+
+    @Value("${system.default.client.fastapi-delete}")
+    private String deletUrl;
 
     @Override
     public Post getPostById(Long id) {
@@ -253,7 +257,7 @@ public class PostServiceImpl implements PostService {
 
         if (!imageIds.isEmpty()) {
             restClient.method(HttpMethod.DELETE)
-                    .uri("http://localhost:8888/api/v1/delete")
+                    .uri(deletUrl)
                     .body(DeleteImageRequest.builder().ids(imageIds).build())
                     .retrieve()
                     .body(Map.class);

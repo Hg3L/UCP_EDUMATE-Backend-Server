@@ -3,6 +3,7 @@ package vn.base.edumate.security;
 import java.util.List;
 
 import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +38,9 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     private final LogoutHandler logoutHandler;
+
+    @Value("${system.default.client.url}")
+    private String clientUrl;
 
     private static final List<String> WHITELIST = List.of("/v1/auth/**",
             "/**",
@@ -92,10 +96,10 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins(clientUrl, "http://localhost:3000")
                         .allowedHeaders("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowCredentials(false)
+                        .allowCredentials(true)
                         .maxAge(3600);
             }
         };

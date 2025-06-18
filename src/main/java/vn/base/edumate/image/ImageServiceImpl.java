@@ -15,6 +15,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,16 +35,18 @@ import vn.base.edumate.vision.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class ImageServiceImpl implements ImageService {
-    ImageRepository imageRepository;
-    ImageMapper imageMapper;
-    Cloudinary cloudinary;
-    ImageAnalyzeService imageAnalyzeService;
+    final ImageRepository imageRepository;
+    final ImageMapper imageMapper;
+    final Cloudinary cloudinary;
+    final ImageAnalyzeService imageAnalyzeService;
 
-    RestClient restClient;
+    final RestClient restClient;
 
+    @Value("${system.default.client.fastapi-batch}")
+    private String batchUrl;
 
     @Override
     public Image getImageById(Long id) {
@@ -91,7 +94,7 @@ public class ImageServiceImpl implements ImageService {
 
             if (!imageAnalyzes.isEmpty()) {
                 restClient.post()
-                        .uri("http://localhost:8888/api/v1/batch")
+                        .uri(batchUrl)
                         .body(ImageAnalyzeBatch.builder().images(imageAnalyzes).build())
                         .retrieve()
                         .body(Map.class);
