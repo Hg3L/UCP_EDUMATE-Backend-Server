@@ -178,6 +178,7 @@ public class UserServiceImpl implements UserService {
                 .avatarUrl(decodedToken.getPicture())
                 .email(decodedToken.getEmail())
                 .username(decodedToken.getName())
+                .violationCount(0)
                 .role(userRole)
                 .build();
 
