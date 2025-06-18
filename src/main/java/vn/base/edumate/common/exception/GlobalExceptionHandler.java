@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -76,6 +79,23 @@ public class GlobalExceptionHandler {
     public ErrorResponse handlingResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
         log.error("Resource not found: ", e);
         ErrorCode errorCode = e.getErrorCode();
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .code(errorCode.getCode())
+                .status(errorCode.getStatus())
+                .path(request.getDescription(showClientInfo).replace("uri=", ""))
+                .message(errorCode.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler({
+            InternalAuthenticationServiceException.class,
+            BadCredentialsException.class
+    })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlingLoginException(Exception e, WebRequest request) {
+        log.error("Login exception: ", e);
+        ErrorCode errorCode = ErrorCode.USER_NOT_EXISTED;
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .code(errorCode.getCode())
